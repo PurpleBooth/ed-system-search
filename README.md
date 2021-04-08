@@ -1,10 +1,15 @@
 # ed-system-search
 
-*ed-system-search* is a tool to find interesting systems in Elite: Dangerous.
+*ed-system-search* is a tool to find interesting systems in Elite:
+Dangerous.
 
 ## Usage
 
-``` shell
+``` shell,script(name="help",expected_exit_code=0)
+ed-system-search --help
+```
+
+``` text,verify(script_name="help",stream=stdout)
 ed-system-search 0.1.0
 Billie Thompson <billie@billiecodes.com>
 Find interesting systems in the EDSM data dump

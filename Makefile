@@ -16,7 +16,7 @@ test:
 .PHONY: specdown
 ## Test the markdown in the docs directory
 specdown: build
-	./bin/specdown ./docs/**.md ./docs/**/*.md ./README.md
+	./specdown-runner ./README.md
 
 .PHONY: smoke-test
 ## Run a smoke test and see if the app runs

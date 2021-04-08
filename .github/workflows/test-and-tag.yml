@@ -5,6 +5,30 @@ on:
     - '*'
   pull_request:
 jobs:
+  specdown:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2.3.4
+    - uses: actions/cache@v2.1.4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          ~/.cargo/bin
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+    - run: |
+        set -euo pipefail
+        mkdir -p "$GITHUB_WORKSPACE/target/assorted/bin"
+        curl -Lo "$GITHUB_WORKSPACE/target/assorted/bin/specdown" "https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-x86_64-unknown-linux-gnu"
+        chmod +x "$GITHUB_WORKSPACE/target/assorted/bin/specdown"
+        echo "$GITHUB_WORKSPACE/target/assorted/bin" >> "$GITHUB_PATH"
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        default: true
+    - run: make specdown
   security-audit:
     runs-on: ubuntu-latest
     steps:
@@ -125,6 +149,7 @@ jobs:
   merge-and-push:
     if: github.ref == 'refs/heads/main'
     needs:
+    - specdown
     - version
     - test
     - lints

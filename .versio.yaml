@@ -9,6 +9,9 @@ projects:
   version:
     file: Cargo.toml
     toml: package.version
+  also:
+    - file: "README.md"
+      pattern: 'ed-system-search (\d+\.\d+\.\d+)'
   hooks:
     post_write: cargo fetch
 
