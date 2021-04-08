@@ -32,6 +32,7 @@ jobs:
         echo "$GITHUB_WORKSPACE/target/assorted/bin" >> "$GITHUB_PATH"
       env:
         SPECDOWN_URL: ${{ matrix.specdown }}
+      name: Download Specdown
     - uses: actions-rs/toolchain@v1
       with:
         profile: minimal
