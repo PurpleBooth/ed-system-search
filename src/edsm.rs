@@ -59,10 +59,7 @@ mod tests {
 
     #[test]
     fn invalid_json() {
-        assert_eq!(
-            parse("This is not valid json".as_bytes()).is_err(),
-            true
-        )
+        assert_eq!(parse("This is not valid json".as_bytes()).is_err(), true)
     }
 
     #[test]
