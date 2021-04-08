@@ -16,7 +16,7 @@ test:
 .PHONY: specdown
 ## Test the markdown in the docs directory
 specdown: build
-	./specdown-runner ./README.md
+	./runners/specdown-runner ./README.md
 
 .PHONY: smoke-test
 ## Run a smoke test and see if the app runs
@@ -35,7 +35,6 @@ lint:
 	cargo clippy --all-features -- -D warnings -Dclippy::all -D clippy::pedantic -D clippy::cargo -A clippy::multiple-crate-versions
 	cargo check
 	cargo audit
-	#npx prettier --check **.yml
 
 .PHONY: fmt
 ## Format what can be formatted
@@ -43,7 +42,7 @@ fmt:
 	cargo fix --allow-dirty
 	cargo +nightly clippy --allow-dirty --fix -Z unstable-options --all-features -- -D warnings -Dclippy::all -D clippy::pedantic
 	cargo fmt --all
-#	npx prettier --write **.yml
+	yamlfmt -w **.yml
 
 .PHONY: clean
 ## Clean the build directory
