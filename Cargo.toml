@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["Billie Thompson <billie@billiecodes.com>"]
 edition = "2018"
 description = "Find interesting systems in the EDSM data dump"
+repository = "https://github.com/PurpleBooth/ed-system-search/"
+license = "CC0-1.0"
+categories = [ "command-line-interface", "command-line-utilities" ]
+keywords = [ "elite", "elite-dangerous" ]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
