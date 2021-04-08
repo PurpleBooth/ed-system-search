@@ -6,7 +6,12 @@ on:
   pull_request:
 jobs:
   specdown:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+          - os: ubuntu-latest
     steps:
     - uses: actions/checkout@v2.3.4
     - uses: actions/cache@v2.1.4
@@ -89,13 +94,8 @@ jobs:
       matrix:
         include:
         - os: macos-latest
-          install: echo nothing-to-install
         - os: ubuntu-latest
-          install: sudo apt-get install -y libxcb-shape0-dev libxcb-xfixes0-dev
     steps:
-    - run: ${{ matrix.install }}
-      env:
-        DEBIAN_FRONTEND: noninteractive
     - uses: actions/checkout@v2.3.4
     - uses: actions/cache@v2.1.4
       with:
