@@ -26,7 +26,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn display_systems<T: System>(systems: Vec<Box<T>>) {
+fn display_systems<T: System>(mut systems: Vec<Box<T>>) {
+    systems.sort_by(|a, b| a.name().cmp(b.name()));
+
     for system in systems {
         println!("{}", system.name())
     }

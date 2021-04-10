@@ -20,9 +20,19 @@ pub fn app() -> App<'static> {
         .arg(
             Arg::new("min-docks-large")
                 .about(
-                    "Filter the systems that are returned by the number of place with large docks",
+                    "Filter the systems that are have less than the given number of docks with room for large ships",
                 )
                 .long("min-docks-large")
+                .takes_value(true)
+                .value_name("COUNT")
+                .required(false),
+        )
+        .arg(
+            Arg::new("min-docks")
+                .about(
+                    "Filter the systems that are have less than the given number of docks with room for ships"
+                )
+                .long("min-docks")
                 .takes_value(true)
                 .value_name("COUNT")
                 .required(false),
@@ -33,6 +43,10 @@ pub fn parameters_from_matches(matches: &ArgMatches) -> Result<SearchOptions, Er
     Ok(SearchOptions {
         min_large_docks: matches
             .value_of("min-docks-large")
+            .map(|value| usize::from_str(value).map_err(Error::from))
+            .map_or(Ok(None), |v| v.map(Some))?,
+        min_docks: matches
+            .value_of("min-docks")
             .map(|value| usize::from_str(value).map_err(Error::from))
             .map_or(Ok(None), |v| v.map(Some))?,
     })
@@ -50,12 +64,13 @@ mod tests {
     use crate::domain::SearchOptions;
 
     #[test]
-    fn large_docks_not_present() {
+    fn no_switches() {
         let args = app().get_matches_from(vec!["ed-system-search", "some-edsm-dump.json.gz"]);
         assert_eq!(
             parameters_from_matches(&args).unwrap(),
             SearchOptions {
-                min_large_docks: None
+                min_large_docks: None,
+                min_docks: None
             }
         )
     }
@@ -80,7 +95,34 @@ mod tests {
         assert_eq!(
             parameters_from_matches(&args).unwrap(),
             SearchOptions {
-                min_large_docks: Some(10)
+                min_large_docks: Some(10),
+                min_docks: None
+            }
+        )
+    }
+
+    #[test]
+    fn docks_invalid() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--min-docks=banana",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(parameters_from_matches(&args).is_err(), true)
+    }
+
+    #[test]
+    fn docks_present() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--min-docks=10",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(&args).unwrap(),
+            SearchOptions {
+                min_large_docks: None,
+                min_docks: Some(10)
             }
         )
     }

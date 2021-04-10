@@ -25,6 +25,8 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
-        --min-docks-large <COUNT>    Filter the systems that are returned by the number of place
-                                     with large docks
+        --min-docks <COUNT>          Filter the systems that are have less than the given number of
+                                     docks with room for ships
+        --min-docks-large <COUNT>    Filter the systems that are have less than the given number of
+                                     docks with room for large ships
 ```

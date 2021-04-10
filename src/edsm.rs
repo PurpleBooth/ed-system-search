@@ -48,8 +48,9 @@ impl domain::System for System {
     fn stations(&self) -> Vec<Box<dyn domain::Station>> {
         self.stations
             .clone()
-            .map(|x| {
-                x.into_iter()
+            .map(|stations| {
+                stations
+                    .into_iter()
                     .map(|x| -> Box<dyn domain::Station> { Box::from(x) })
                     .collect::<Vec<Box<dyn domain::Station>>>()
             })

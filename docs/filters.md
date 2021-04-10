@@ -13,10 +13,94 @@ Sol
 
 if it's not a number it'll fail
 
-``` shell,script(name="min-docks-large",expected_exit_code=1)
+``` shell,script(name="min-docks-large-err",expected_exit_code=1)
 ed-system-search --min-docks-large banana "$EDSM_GZ_PATH"
 ```
 
-``` text,verify(script_name="min-docks-large",stream=stderr)
+``` text,verify(script_name="min-docks-large-err",stream=stderr)
+Error: InvalidCount(ParseIntError { kind: InvalidDigit })
+```
+
+You can search by number of places you can dock a ship
+
+``` shell,script(name="min-docks",expected_exit_code=0)
+ed-system-search --min-docks 15 "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="min-docks",stream=stdout)
+62 Ursae Majoris
+Aditjargl
+Adityan
+Albarib
+Alchita
+Alpha Tucanae
+Aluriates
+Amenta
+Aranbarahun
+Arevakimos
+Arikara
+BD+65 1846
+BD-19 3629A
+Balmung
+Beker
+Beta Circini
+Candecama
+Charunder
+Chujohimba
+Gebel
+Gliese 867.1
+Gliese 868
+Gliese 900.1
+Grebegus
+HIP 115929
+HIP 21559
+HIP 21778
+HIP 22281
+HIP 38129
+HIP 41308
+HIP 78983
+HIP 9316
+HR 1475
+Inara
+Jang Di
+Kakmburra
+Kalb
+Kamocan
+Kotilekui
+LHS 1914
+LHS 2310
+LHS 274
+LTT 11244
+Laksak
+Lalande 10797
+Laukese
+Mula Wendes
+Mullag
+NLTT 9447
+Nahuatl
+Nyx
+Oduduro
+Peraesii
+Pini
+Plutarch
+Puelchana
+Rind
+Scirth
+Sol
+T'iensei
+Tinigua
+Uchaluroja
+Urcia
+Yab Yum
+Zeta Microscopii
+```
+
+if it's not a number it'll fail
+
+``` shell,script(name="min-docks-err",expected_exit_code=1)
+ed-system-search --min-docks banana "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="min-docks-err",stream=stderr)
 Error: InvalidCount(ParseIntError { kind: InvalidDigit })
 ```

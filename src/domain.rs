@@ -10,23 +10,59 @@ pub trait Station {
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub struct SearchOptions {
     pub(crate) min_large_docks: Option<usize>,
+    pub(crate) min_docks: Option<usize>,
 }
 
 pub fn filter<T: System>(search_options: &SearchOptions, systems: Vec<Box<T>>) -> Vec<Box<T>> {
-    (systems.into_iter().filter(|x| {
-        x.stations()
-            .iter()
-            .map(|x| x.station_type())
-            .filter(|x| {
-                matches!(
-                    *x,
-                    "Asteroid base" | "Coriolis Starport" | "Ocellus Starport" | "Orbis Starport"
-                )
-            })
-            .count()
-            >= search_options.min_large_docks.unwrap_or(0)
-    }))
+    (systems
+        .into_iter()
+        .filter(|system| {
+            search_options
+                .min_docks
+                .map_or(true, |docks| has_min_docks(docks, system.as_ref()))
+        })
+        .filter(|system| {
+            search_options
+                .min_large_docks
+                .map_or(true, |docks| has_min_large_docks(docks, system.as_ref()))
+        }))
     .collect()
+}
+
+fn has_min_large_docks<T: System>(min_large_docks: usize, system: &T) -> bool {
+    system
+        .stations()
+        .iter()
+        .map(|x| x.station_type())
+        .filter(|x| {
+            matches!(
+                *x,
+                "Asteroid base" | "Coriolis Starport" | "Ocellus Starport" | "Orbis Starport"
+            )
+        })
+        .count()
+        >= min_large_docks
+}
+
+fn has_min_docks<T: System>(min_large_docks: usize, system: &T) -> bool {
+    system
+        .stations()
+        .iter()
+        .map(|x| x.station_type())
+        .filter(|x| {
+            matches!(
+                *x,
+                "Asteroid base"
+                    | "Coriolis Starport"
+                    | "Ocellus Starport"
+                    | "Orbis Starport"
+                    | "Outpost"
+                    | "Planetary Outpost"
+                    | "Planetary Port"
+            )
+        })
+        .count()
+        >= min_large_docks
 }
 
 #[cfg(test)]
@@ -86,7 +122,8 @@ mod tests {
         assert_eq!(
             filter(
                 &SearchOptions {
-                    min_large_docks: None
+                    min_large_docks: None,
+                    min_docks: None,
                 },
                 input.clone(),
             ),
@@ -101,7 +138,24 @@ mod tests {
         assert_eq!(
             filter(
                 &SearchOptions {
-                    min_large_docks: Some(5)
+                    min_large_docks: Some(5),
+                    min_docks: None,
+                },
+                input,
+            ),
+            vec![sol]
+        )
+    }
+
+    #[test]
+    fn systems_without_enough_docks_are_skipped() {
+        let sol = make_system("Sol", 5, 5);
+        let input = vec![make_system("Sanos", 2, 5), sol.clone()];
+        assert_eq!(
+            filter(
+                &SearchOptions {
+                    min_large_docks: None,
+                    min_docks: Some(9),
                 },
                 input,
             ),
