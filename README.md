@@ -25,6 +25,9 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
+        --max-distance-from-reference <LIGHT_SECONDS>
+            Filter the systems that are further than this distance from the reference
+
         --max-distance-from-sol <LIGHT_SECONDS>
             Filter the systems that are further than this distance from sol
 
@@ -35,4 +38,5 @@ OPTIONS:
             Filter the systems that are have less than the given number of docks with room for large
             ships
 
+        --reference <SYSTEM_NAME>                        A reference system used by other filters
 ```

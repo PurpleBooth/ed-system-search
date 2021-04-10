@@ -1,5 +1,7 @@
 # Filters
 
+## Minimum number of large docks
+
 You can search by number of places you can dock on a large ship
 
 ``` shell,script(name="min-docks-large",expected_exit_code=0)
@@ -18,8 +20,10 @@ ed-system-search --min-docks-large banana "$EDSM_GZ_PATH"
 ```
 
 ``` text,verify(script_name="min-docks-large-err",stream=stderr)
-Error: InvalidCount(ParseIntError { kind: InvalidDigit })
+Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
 ```
+
+## Minimum number of docks
 
 You can search by number of places you can dock a ship
 
@@ -102,16 +106,18 @@ ed-system-search --min-docks banana "$EDSM_GZ_PATH"
 ```
 
 ``` text,verify(script_name="min-docks-err",stream=stderr)
-Error: InvalidCount(ParseIntError { kind: InvalidDigit })
+Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
 ```
+
+## Max distance from reference system
 
 You can search by distance from sol
 
-``` shell,script(name="max-distance-from-sol",expected_exit_code=0)
-ed-system-search --max-distance-from-sol 10 "$EDSM_GZ_PATH"
+``` shell,script(name="max-distance-from-reference",expected_exit_code=0)
+ed-system-search --reference=Sol --max-distance-from-reference 10 "$EDSM_GZ_PATH"
 ```
 
-``` text,verify(script_name="max-distance-from-sol",stream=stdout)
+``` text,verify(script_name="max-distance-from-reference",stream=stdout)
 Alpha Centauri
 Barnard's Star
 Duamta
@@ -125,10 +131,20 @@ Wolf 359
 
 if it's not a number it'll fail
 
-``` shell,script(name="max-distance-from-sol-err",expected_exit_code=1)
-ed-system-search --max-distance-from-sol banana "$EDSM_GZ_PATH"
+``` shell,script(name="max-distance-from-reference-err",expected_exit_code=1)
+ed-system-search --reference=Sol --max-distance-from-reference banana "$EDSM_GZ_PATH"
 ```
 
-``` text,verify(script_name="max-distance-from-sol-err",stream=stderr)
-Error: InvalidFloat(ParseFloatError { kind: Invalid })
+``` text,verify(script_name="max-distance-from-reference-err",stream=stderr)
+Error: Cli(InvalidFloat(ParseFloatError { kind: Invalid }))
+```
+
+If the reference isn't found it'll fail
+
+``` shell,script(name="missing-reference-err",expected_exit_code=1)
+ed-system-search --reference=Missing --max-distance-from-reference 10 "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="missing-reference-err",stream=stderr)
+Error: Cli(SystemNotFound("Missing"))
 ```

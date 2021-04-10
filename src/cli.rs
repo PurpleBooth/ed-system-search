@@ -4,7 +4,7 @@ use std::str::FromStr;
 use clap::{crate_authors, crate_version, App, Arg, ArgMatches};
 use thiserror::Error as ThisError;
 
-use crate::domain::SearchOptions;
+use crate::domain::{SearchOptions, System};
 
 pub fn app() -> App<'static> {
     App::new(String::from(env!("CARGO_PKG_NAME")))
@@ -46,10 +46,32 @@ pub fn app() -> App<'static> {
                 .takes_value(true)
                 .value_name("LIGHT_SECONDS")
                 .required(false),
+        ).arg(
+        Arg::new("max-distance-from-reference")
+            .about(
+                "Filter the systems that are further than this distance from the reference"
+            )
+            .long("max-distance-from-reference")
+            .takes_value(true)
+            .value_name("LIGHT_SECONDS")
+            .required(false),
+    )
+        .arg(
+            Arg::new("reference")
+                .about(
+                    "A reference system used by other filters"
+                )
+                .long("reference")
+                .takes_value(true)
+                .value_name("SYSTEM_NAME")
+                .required(false),
         )
 }
 
-pub fn parameters_from_matches(matches: &ArgMatches) -> Result<SearchOptions, Error> {
+pub fn parameters_from_matches<T: System>(
+    matches: &ArgMatches,
+    systems: &[T],
+) -> Result<SearchOptions, Error> {
     Ok(SearchOptions {
         min_large_docks: matches
             .value_of("min-docks-large")
@@ -63,6 +85,21 @@ pub fn parameters_from_matches(matches: &ArgMatches) -> Result<SearchOptions, Er
             .value_of("max-distance-from-sol")
             .map(|value| f64::from_str(value).map_err(Error::from))
             .map_or(Ok(None), |v| v.map(Some))?,
+        reference: matches
+            .value_of("reference")
+            .map(|reference_name| {
+                systems
+                    .iter()
+                    .find(|system| system.name() == reference_name)
+                    .map(|x| x.coordinates())
+                    .ok_or_else(|| Error::SystemNotFound(reference_name.into()))
+            })
+            .map_or(Ok(None), |v| v.map(Some))?,
+
+        max_distance_from_reference: matches
+            .value_of("max-distance-from-reference")
+            .map(|value| f64::from_str(value).map_err(Error::from))
+            .map_or(Ok(None), |v| v.map(Some))?,
     })
 }
 
@@ -72,22 +109,27 @@ pub enum Error {
     InvalidCount(#[from] ParseIntError),
     #[error("invalid number: {0:?}")]
     InvalidFloat(#[from] ParseFloatError),
+    #[error("system not found: {0}")]
+    SystemNotFound(String),
 }
 
 #[cfg(test)]
 mod tests {
     use crate::cli::{app, parameters_from_matches};
-    use crate::domain::SearchOptions;
+    use crate::domain::{Coords, SearchOptions};
+    use crate::stub;
 
     #[test]
     fn no_switches() {
         let args = app().get_matches_from(vec!["ed-system-search", "some-edsm-dump.json.gz"]);
         assert_eq!(
-            parameters_from_matches(&args).unwrap(),
+            parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             SearchOptions {
                 min_large_docks: None,
                 min_docks: None,
-                max_distance_from_sol: None
+                max_distance_from_sol: None,
+                reference: None,
+                max_distance_from_reference: None,
             }
         )
     }
@@ -99,7 +141,10 @@ mod tests {
             "--min-docks-large=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert_eq!(parameters_from_matches(&args).is_err(), true)
+        assert_eq!(
+            parameters_from_matches(&args, &[] as &[stub::System]).is_err(),
+            true
+        )
     }
 
     #[test]
@@ -110,11 +155,13 @@ mod tests {
             "some-edsm-dump.json.gz",
         ]);
         assert_eq!(
-            parameters_from_matches(&args).unwrap(),
+            parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             SearchOptions {
                 min_large_docks: Some(10),
                 min_docks: None,
-                max_distance_from_sol: None
+                max_distance_from_sol: None,
+                reference: None,
+                max_distance_from_reference: None,
             }
         )
     }
@@ -126,7 +173,10 @@ mod tests {
             "--min-docks=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert_eq!(parameters_from_matches(&args).is_err(), true)
+        assert_eq!(
+            parameters_from_matches(&args, &[] as &[stub::System]).is_err(),
+            true
+        )
     }
 
     #[test]
@@ -137,11 +187,13 @@ mod tests {
             "some-edsm-dump.json.gz",
         ]);
         assert_eq!(
-            parameters_from_matches(&args).unwrap(),
+            parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             SearchOptions {
                 min_large_docks: None,
                 min_docks: Some(10),
-                max_distance_from_sol: None
+                max_distance_from_sol: None,
+                reference: None,
+                max_distance_from_reference: None,
             }
         )
     }
@@ -153,7 +205,10 @@ mod tests {
             "--max-distance-from-sol=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert_eq!(parameters_from_matches(&args).is_err(), true)
+        assert_eq!(
+            parameters_from_matches(&args, &[] as &[stub::System]).is_err(),
+            true
+        )
     }
 
     #[test]
@@ -164,11 +219,101 @@ mod tests {
             "some-edsm-dump.json.gz",
         ]);
         assert_eq!(
-            parameters_from_matches(&args).unwrap(),
+            parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             SearchOptions {
                 min_large_docks: None,
                 min_docks: None,
-                max_distance_from_sol: Some(10.0)
+                max_distance_from_sol: Some(10.0),
+                reference: None,
+                max_distance_from_reference: None,
+            }
+        )
+    }
+
+    #[test]
+    fn distance_from_reference_invalid() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--max-distance-from-reference=banana",
+            "--reference=Sol",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(
+                &args,
+                &[stub::System {
+                    name: "Sol".into(),
+                    coords: Coords {
+                        x: f64::from(0),
+                        y: f64::from(0),
+                        z: f64::from(0),
+                    },
+                    stations: vec![],
+                }],
+            )
+            .is_err(),
+            true
+        )
+    }
+
+    #[test]
+    fn reference_system_not_found() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--max-distance-from-reference=10",
+            "--reference=Missing",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(
+                &args,
+                &[stub::System {
+                    name: "Sol".into(),
+                    coords: Coords {
+                        x: f64::from(0),
+                        y: f64::from(0),
+                        z: f64::from(0),
+                    },
+                    stations: vec![],
+                }],
+            )
+            .is_err(),
+            true
+        )
+    }
+
+    #[test]
+    fn both_reference_and_disance_present() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--max-distance-from-reference=10",
+            "--reference=Sol",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(
+                &args,
+                &[stub::System {
+                    name: "Sol".into(),
+                    coords: Coords {
+                        x: f64::from(0),
+                        y: f64::from(0),
+                        z: f64::from(0),
+                    },
+                    stations: vec![],
+                }],
+            )
+            .unwrap(),
+            SearchOptions {
+                min_large_docks: None,
+                min_docks: None,
+                max_distance_from_sol: None,
+                reference: Some(Coords {
+                    x: f64::from(0),
+                    y: f64::from(0),
+                    z: f64::from(0)
+                }),
+                max_distance_from_reference: Some(10_f64),
             }
         )
     }

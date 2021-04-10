@@ -12,25 +12,24 @@ mod distance;
 mod domain;
 mod edsm;
 mod filter;
+mod stub;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<(), Error> {
     let matches = cli::app().get_matches();
-    let search_parameters = parameters_from_matches(&matches)?;
-
     let path = matches.value_of("edsm-path").unwrap();
     let compressed_file = File::open(path)?;
     let file = GzDecoder::new(compressed_file);
-    let systems: Vec<Box<edsm::System>> = edsm::parse(file)?.into_iter().map(Box::from).collect();
-    let filtered_system = filter::filter(&search_parameters, systems);
+    let systems = edsm::parse(file)?;
+
+    let search_parameters = parameters_from_matches(&matches, systems.as_slice())?;
+    let filtered_system = filter::filter(&search_parameters, systems.as_slice());
 
     display_systems(filtered_system);
 
     Ok(())
 }
 
-fn display_systems<T: System>(mut systems: Vec<Box<T>>) {
-    systems.sort_by(|a, b| a.name().cmp(b.name()));
-
+fn display_systems<T: System>(systems: Vec<T>) {
     for system in systems {
         println!("{}", system.name())
     }

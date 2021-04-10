@@ -1,27 +1,46 @@
 use crate::distance;
 use crate::domain::{Coords, SearchOptions, System};
 
-pub fn filter<T: System>(search_options: &SearchOptions, systems: Vec<Box<T>>) -> Vec<Box<T>> {
-    (systems
-        .into_iter()
-        .filter(|system| {
-            search_options
-                .min_docks
-                .map_or(true, |docks| has_min_docks(docks, system.as_ref()))
-        })
-        .filter(|system| {
-            search_options
-                .min_large_docks
-                .map_or(true, |docks| has_min_large_docks(docks, system.as_ref()))
-        })
+pub fn filter<'a, T: System + Clone>(
+    search_options: &'a SearchOptions,
+    systems: &'a [T],
+) -> Vec<T> {
+    let mut systems: Vec<_> = (systems
+        .iter()
         .filter(|system| {
             search_options
                 .max_distance_from_sol
                 .map_or(true, |distance_from_sol_ls| {
-                    has_location_within_max_distance_from_sol(distance_from_sol_ls, system.as_ref())
+                    has_location_within_max_distance_from_sol(distance_from_sol_ls, *system)
                 })
+        })
+        .filter(|system| {
+            search_options
+                .reference
+                .and_then(|x| search_options.max_distance_from_reference.map(|y| (x, y)))
+                .map_or(true, |(reference, distance_from_reference_ls)| {
+                    has_location_within_max_distance_from_reference(
+                        distance_from_reference_ls,
+                        reference,
+                        *system,
+                    )
+                })
+        })
+        .filter(|system| {
+            search_options
+                .min_docks
+                .map_or(true, |docks| has_min_docks(docks, *system))
+        })
+        .filter(|system| {
+            search_options
+                .min_large_docks
+                .map_or(true, |docks| has_min_large_docks(docks, *system))
         }))
-    .collect()
+    .cloned()
+    .collect();
+
+    systems.sort_by(|a, b| a.name().cmp(b.name()));
+    systems
 }
 
 fn has_min_large_docks<T: System>(min_large_docks: usize, system: &T) -> bool {
@@ -58,6 +77,14 @@ fn has_min_docks<T: System>(min_large_docks: usize, system: &T) -> bool {
         })
         .count()
         >= min_large_docks
+}
+
+fn has_location_within_max_distance_from_reference<T: System>(
+    distance_from_reference_ls: f64,
+    reference: Coords,
+    system: &T,
+) -> bool {
+    distance::distance(&reference, &system.coordinates()) <= distance_from_reference_ls as f64
 }
 
 fn has_location_within_max_distance_from_sol<T: System>(

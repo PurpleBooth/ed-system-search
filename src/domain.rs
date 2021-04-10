@@ -1,3 +1,4 @@
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Coords {
     pub(crate) x: f64,
     pub(crate) y: f64,
@@ -19,6 +20,8 @@ pub struct SearchOptions {
     pub(crate) min_large_docks: Option<usize>,
     pub(crate) min_docks: Option<usize>,
     pub(crate) max_distance_from_sol: Option<f64>,
+    pub(crate) reference: Option<Coords>,
+    pub(crate) max_distance_from_reference: Option<f64>,
 }
 
 #[cfg(test)]
@@ -37,7 +40,7 @@ mod tests {
         large_docks: usize,
         small_docks: usize,
         coordinates: Option<EdsmCoords>,
-    ) -> Box<EdsmSystem> {
+    ) -> EdsmSystem {
         let mut large_station_types = [
             "Asteroid base",
             "Coriolis Starport",
@@ -60,7 +63,7 @@ mod tests {
             .take(small_docks),
         );
 
-        Box::from(EdsmSystem {
+        EdsmSystem {
             name: String::from(name),
             coords: coordinates.unwrap_or(EdsmCoords {
                 x: 73.875_f64,
@@ -76,12 +79,12 @@ mod tests {
                 EdsmFaction { is_player: false },
             ]),
             stations: Some(stations.collect()),
-        })
+        }
     }
 
     #[test]
     fn no_options_returns_everything() {
-        let input = vec![
+        let input = [
             make_system("Sanos", 5, 5, None),
             make_system("Sol", 5, 5, None),
         ];
@@ -91,8 +94,10 @@ mod tests {
                     min_large_docks: None,
                     min_docks: None,
                     max_distance_from_sol: None,
+                    reference: None,
+                    max_distance_from_reference: None
                 },
-                input.clone(),
+                &input,
             ),
             input
         )
@@ -101,34 +106,38 @@ mod tests {
     #[test]
     fn systems_without_enough_large_docks_are_skipped() {
         let sol = make_system("Sol", 5, 5, None);
-        let input = vec![make_system("Sanos", 2, 5, None), sol.clone()];
+        let input = [make_system("Sanos", 2, 5, None), sol.clone()];
         assert_eq!(
             filter(
                 &SearchOptions {
                     min_large_docks: Some(5),
                     min_docks: None,
                     max_distance_from_sol: None,
+                    reference: None,
+                    max_distance_from_reference: None
                 },
-                input,
+                &input,
             ),
-            vec![sol]
+            &[sol]
         )
     }
 
     #[test]
     fn systems_without_enough_docks_are_skipped() {
         let sol = make_system("Sol", 5, 5, None);
-        let input = vec![make_system("Sanos", 2, 5, None), sol.clone()];
+        let input = [make_system("Sanos", 2, 5, None), sol.clone()];
         assert_eq!(
             filter(
                 &SearchOptions {
                     min_large_docks: None,
                     min_docks: Some(9),
                     max_distance_from_sol: None,
+                    reference: None,
+                    max_distance_from_reference: None
                 },
-                input,
+                &input,
             ),
-            vec![sol]
+            &[sol]
         )
     }
 
@@ -144,7 +153,7 @@ mod tests {
                 z: f64::from(0),
             }),
         );
-        let input = vec![
+        let input = [
             make_system(
                 "Sanos",
                 2,
@@ -163,8 +172,53 @@ mod tests {
                     min_large_docks: None,
                     min_docks: None,
                     max_distance_from_sol: Some(90.0),
+                    reference: None,
+                    max_distance_from_reference: None
                 },
-                input,
+                &input,
+            ),
+            vec![sol]
+        )
+    }
+    #[test]
+    fn systems_too_far_from_reference_skipped() {
+        let sol = make_system(
+            "Sol",
+            5,
+            5,
+            Option::from(EdsmCoords {
+                x: f64::from(0),
+                y: f64::from(0),
+                z: f64::from(0),
+            }),
+        );
+        let input = [
+            make_system(
+                "Sanos",
+                2,
+                5,
+                Option::from(EdsmCoords {
+                    x: 73.875_f64,
+                    y: -3.5625_f64,
+                    z: -52.625_f64,
+                }),
+            ),
+            sol.clone(),
+        ];
+        assert_eq!(
+            filter(
+                &SearchOptions {
+                    min_large_docks: None,
+                    min_docks: None,
+                    max_distance_from_sol: None,
+                    reference: Option::from(crate::domain::Coords {
+                        x: f64::from(0),
+                        y: f64::from(0),
+                        z: f64::from(0),
+                    }),
+                    max_distance_from_reference: Some(90.0)
+                },
+                &input,
             ),
             vec![sol]
         )
