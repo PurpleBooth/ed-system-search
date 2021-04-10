@@ -104,3 +104,31 @@ ed-system-search --min-docks banana "$EDSM_GZ_PATH"
 ``` text,verify(script_name="min-docks-err",stream=stderr)
 Error: InvalidCount(ParseIntError { kind: InvalidDigit })
 ```
+
+You can search by distance from sol
+
+``` shell,script(name="max-distance-from-sol",expected_exit_code=0)
+ed-system-search --max-distance-from-sol 10 "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="max-distance-from-sol",stream=stdout)
+Alpha Centauri
+Barnard's Star
+Duamta
+Luhman 16
+Ross 154
+Sirius
+Sol
+WISE 0855-0714
+Wolf 359
+```
+
+if it's not a number it'll fail
+
+``` shell,script(name="max-distance-from-sol-err",expected_exit_code=1)
+ed-system-search --max-distance-from-sol banana "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="max-distance-from-sol-err",stream=stderr)
+Error: InvalidFloat(ParseFloatError { kind: Invalid })
+```

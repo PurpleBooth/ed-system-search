@@ -25,8 +25,14 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
-        --min-docks <COUNT>          Filter the systems that are have less than the given number of
-                                     docks with room for ships
-        --min-docks-large <COUNT>    Filter the systems that are have less than the given number of
-                                     docks with room for large ships
+        --max-distance-from-sol <LIGHT_SECONDS>
+            Filter the systems that are further than this distance from sol
+
+        --min-docks <COUNT>
+            Filter the systems that are have less than the given number of docks
+
+        --min-docks-large <COUNT>
+            Filter the systems that are have less than the given number of docks with room for large
+            ships
+
 ```

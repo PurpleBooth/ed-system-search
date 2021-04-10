@@ -1,4 +1,4 @@
-use std::num::ParseIntError;
+use std::num::{ParseFloatError, ParseIntError};
 use std::str::FromStr;
 
 use clap::{crate_authors, crate_version, App, Arg, ArgMatches};
@@ -30,11 +30,21 @@ pub fn app() -> App<'static> {
         .arg(
             Arg::new("min-docks")
                 .about(
-                    "Filter the systems that are have less than the given number of docks with room for ships"
+                    "Filter the systems that are have less than the given number of docks"
                 )
                 .long("min-docks")
                 .takes_value(true)
                 .value_name("COUNT")
+                .required(false),
+        )
+        .arg(
+            Arg::new("max-distance-from-sol")
+                .about(
+                    "Filter the systems that are further than this distance from sol"
+                )
+                .long("max-distance-from-sol")
+                .takes_value(true)
+                .value_name("LIGHT_SECONDS")
                 .required(false),
         )
 }
@@ -49,13 +59,19 @@ pub fn parameters_from_matches(matches: &ArgMatches) -> Result<SearchOptions, Er
             .value_of("min-docks")
             .map(|value| usize::from_str(value).map_err(Error::from))
             .map_or(Ok(None), |v| v.map(Some))?,
+        max_distance_from_sol: matches
+            .value_of("max-distance-from-sol")
+            .map(|value| f64::from_str(value).map_err(Error::from))
+            .map_or(Ok(None), |v| v.map(Some))?,
     })
 }
 
 #[derive(ThisError, Debug)]
 pub enum Error {
-    #[error("invalid count: {0:?}")]
+    #[error("invalid number: {0:?}")]
     InvalidCount(#[from] ParseIntError),
+    #[error("invalid number: {0:?}")]
+    InvalidFloat(#[from] ParseFloatError),
 }
 
 #[cfg(test)]
@@ -70,7 +86,8 @@ mod tests {
             parameters_from_matches(&args).unwrap(),
             SearchOptions {
                 min_large_docks: None,
-                min_docks: None
+                min_docks: None,
+                max_distance_from_sol: None
             }
         )
     }
@@ -96,7 +113,8 @@ mod tests {
             parameters_from_matches(&args).unwrap(),
             SearchOptions {
                 min_large_docks: Some(10),
-                min_docks: None
+                min_docks: None,
+                max_distance_from_sol: None
             }
         )
     }
@@ -122,7 +140,35 @@ mod tests {
             parameters_from_matches(&args).unwrap(),
             SearchOptions {
                 min_large_docks: None,
-                min_docks: Some(10)
+                min_docks: Some(10),
+                max_distance_from_sol: None
+            }
+        )
+    }
+
+    #[test]
+    fn distance_from_sol_invalid() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--max-distance-from-sol=banana",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(parameters_from_matches(&args).is_err(), true)
+    }
+
+    #[test]
+    fn distance_from_sol_present() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--max-distance-from-sol=10",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(&args).unwrap(),
+            SearchOptions {
+                min_large_docks: None,
+                min_docks: None,
+                max_distance_from_sol: Some(10.0)
             }
         )
     }

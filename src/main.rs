@@ -8,8 +8,10 @@ use crate::cli::parameters_from_matches;
 use crate::domain::System;
 
 mod cli;
+mod distance;
 mod domain;
 mod edsm;
+mod filter;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = cli::app().get_matches();
@@ -19,7 +21,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let compressed_file = File::open(path)?;
     let file = GzDecoder::new(compressed_file);
     let systems: Vec<Box<edsm::System>> = edsm::parse(file)?.into_iter().map(Box::from).collect();
-    let filtered_system = domain::filter(&search_parameters, systems);
+    let filtered_system = filter::filter(&search_parameters, systems);
 
     display_systems(filtered_system);
 
