@@ -16,7 +16,7 @@ test:
 .PHONY: specdown
 ## Test the markdown in the docs directory
 specdown: build
-	./runners/specdown-runner ./README.md
+	./runners/specdown-runner ./README.md docs/*.md
 
 .PHONY: smoke-test
 ## Run a smoke test and see if the app runs
@@ -42,7 +42,7 @@ fmt:
 	cargo fix --allow-dirty
 	cargo +nightly clippy --allow-dirty --fix -Z unstable-options --all-features -- -D warnings -Dclippy::all -D clippy::pedantic
 	cargo fmt --all
-	yamlfmt -w **.yml
+	yamlfmt -w .github/*.yml .github/workflows/*.yml .*.yml
 
 .PHONY: clean
 ## Clean the build directory

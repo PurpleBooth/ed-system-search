@@ -15,7 +15,7 @@ Billie Thompson <billie@billiecodes.com>
 Find interesting systems in the EDSM data dump
 
 USAGE:
-    ed-system-search <edsm-path>
+    ed-system-search [OPTIONS] <edsm-path>
 
 ARGS:
     <edsm-path>    This is the path to th EDSM dump
@@ -23,4 +23,8 @@ ARGS:
 FLAGS:
     -h, --help       Prints help information
     -V, --version    Prints version information
+
+OPTIONS:
+        --min-docks-large <COUNT>    Filter the systems that are returned by the number of place
+                                     with large docks
 ```
