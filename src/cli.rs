@@ -86,6 +86,15 @@ pub fn app() -> App<'static> {
                 .value_name("SYSTEM_NAME")
                 .required(false),
         )
+        .arg(
+            Arg::new("exclude-permit-locked")
+                .about(
+                    "Exclude permit locked systems"
+                )
+                .long("exclude-permit-locked")
+                .takes_value(false)
+                .required(false),
+        )
 }
 
 pub fn parameters_from_matches<T: System>(
@@ -128,6 +137,7 @@ pub fn parameters_from_matches<T: System>(
             .value_of("min-starports")
             .map(|value| usize::from_str(value).map_err(Error::from))
             .map_or(Ok(None), |v| v.map(Some))?,
+        exclude_permit_locked: matches.is_present("exclude-permit-locked"),
     })
 }
 
@@ -159,7 +169,8 @@ mod tests {
                 reference: None,
                 max_distance_from_reference: None,
                 min_population: None,
-                min_starports: None
+                min_starports: None,
+                exclude_permit_locked: false
             }
         )
     }
@@ -193,7 +204,8 @@ mod tests {
                 reference: None,
                 max_distance_from_reference: None,
                 min_population: None,
-                min_starports: None
+                min_starports: None,
+                exclude_permit_locked: false
             }
         )
     }
@@ -227,7 +239,8 @@ mod tests {
                 reference: None,
                 max_distance_from_reference: None,
                 min_population: Some(10),
-                min_starports: None
+                min_starports: None,
+                exclude_permit_locked: false
             }
         )
     }
@@ -261,7 +274,8 @@ mod tests {
                 reference: None,
                 max_distance_from_reference: None,
                 min_population: None,
-                min_starports: None
+                min_starports: None,
+                exclude_permit_locked: false
             }
         )
     }
@@ -295,7 +309,8 @@ mod tests {
                 max_distance_from_sol: None,
                 reference: None,
                 max_distance_from_reference: None,
-                min_population: None
+                min_population: None,
+                exclude_permit_locked: false
             }
         )
     }
@@ -329,7 +344,30 @@ mod tests {
                 max_distance_from_sol: None,
                 reference: None,
                 max_distance_from_reference: None,
-                min_starports: None
+                min_starports: None,
+                exclude_permit_locked: false
+            }
+        )
+    }
+
+    #[test]
+    fn exclude_permit_locked() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--exclude-permit-locked",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
+            SearchOptions {
+                min_large_docks: None,
+                min_docks: None,
+                min_population: None,
+                max_distance_from_sol: None,
+                reference: None,
+                max_distance_from_reference: None,
+                min_starports: None,
+                exclude_permit_locked: true
             }
         )
     }
@@ -363,7 +401,8 @@ mod tests {
                 reference: None,
                 max_distance_from_reference: None,
                 min_population: None,
-                min_starports: None
+                min_starports: None,
+                exclude_permit_locked: false
             }
         )
     }
@@ -456,7 +495,8 @@ mod tests {
                 }),
                 max_distance_from_reference: Some(10_f64),
                 min_population: None,
-                min_starports: None
+                min_starports: None,
+                exclude_permit_locked: false
             }
         )
     }

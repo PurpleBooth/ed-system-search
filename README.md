@@ -15,14 +15,15 @@ Billie Thompson <billie@billiecodes.com>
 Find interesting systems in the EDSM data dump
 
 USAGE:
-    ed-system-search [OPTIONS] <edsm-path>
+    ed-system-search [FLAGS] [OPTIONS] <edsm-path>
 
 ARGS:
     <edsm-path>    This is the path to th EDSM dump in .json.gz format
 
 FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+        --exclude-permit-locked    Exclude permit locked systems
+    -h, --help                     Prints help information
+    -V, --version                  Prints version information
 
 OPTIONS:
         --max-distance-from-reference <LIGHT_SECONDS>

@@ -1,5 +1,23 @@
 # Filters
 
+## Permit locked systems
+
+Exclude permit locked systems
+
+``` shell,script(name="exclude-permit-locked",expected_exit_code=0)
+ed-system-search --exclude-permit-locked --max-distance-from-sol 10 "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="exclude-permit-locked",stream=stdout)
+Alpha Centauri
+Barnard's Star
+Duamta
+Luhman 16
+Ross 154
+WISE 0855-0714
+Wolf 359
+```
+
 ## Minimum number of large docks
 
 You can search by number of places you can dock on a large ship

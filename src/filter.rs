@@ -45,12 +45,91 @@ pub fn filter<'a, T: System + Clone>(
             search_options
                 .min_population
                 .map_or(true, |population| has_min_population(population, *system))
+        })
+        .filter(|system| {
+            if search_options.exclude_permit_locked {
+                !is_permit_locked_system(*system)
+            } else {
+                true
+            }
         }))
     .cloned()
     .collect();
 
     systems.sort_by(|a, b| a.name().cmp(b.name()));
     systems
+}
+
+fn is_permit_locked_system<T: System>(system: &T) -> bool {
+    matches!(
+        system.name(),
+        "Sol"
+            | "Beta Hydri"
+            | "Vega"
+            | "PLX 695"
+            | "Ross 128"
+            | "Exbeur"
+            | "Hors"
+            | "HIP 54530"
+            | "4 Sextantis"
+            | "CD-44 1695"
+            | "HIP 22460"
+            | "LFT 509"
+            | "Mingfu"
+            | "Witch's Reach"
+            | "Achenar"
+            | "Summerland"
+            | "Facece"
+            | "Alioth"
+            | "Shinrarta Dezhra"
+            | "CD-43 11917"
+            | "Crom"
+            | "Jotun"
+            | "Terra Mater"
+            | "Sirius"
+            | "Isinor"
+            | "Hodack"
+            | "LTT 198"
+            | "Luyten 347-14"
+            | "Nastrond"
+            | "Peregrina"
+            | "Pi Mensae"
+            | "Tiliala"
+            | "van Maanen's Star"
+            | "Alpha Hydri"
+            | "Bellica"
+            | "Dryio Flyuae IC-B c1-377"
+            | "HIP 10332"
+            | "HIP 104941"
+            | "HIP 22182"
+            | "HIP 39425"
+            | "HIP 51073"
+            | "HIP 87621"
+            | "HR 4413"
+            | "LHS 2894"
+            | "LHS 2921"
+            | "LHS 3091"
+            | "Mbooni"
+            | "Plaa Ain HA-Z d46"
+            | "Polaris"
+            | "Ross 354"
+            | "Scheau Bli NB-O d6-1409"
+            | "Wolf 262"
+            | "Diso 5 C"
+            | "Lave 2"
+            | "Moon"
+            | "Triton"
+            | "Azoth"
+            | "Dromi"
+            | "Lia Fail"
+            | "Matet"
+            | "Orna"
+            | "Otegine"
+            | "Sharur"
+            | "Tarnkappe"
+            | "Tyet"
+            | "Wolfsegen"
+    )
 }
 
 fn has_min_large_docks<T: System>(min_large_docks: usize, system: &T) -> bool {
@@ -208,7 +287,8 @@ mod tests {
                     reference: None,
                     max_distance_from_reference: None,
                     min_population: None,
-                    min_starports: None
+                    min_starports: None,
+                    exclude_permit_locked: false,
                 },
                 &input,
             ),
@@ -232,7 +312,8 @@ mod tests {
                     reference: None,
                     max_distance_from_reference: None,
                     min_population: None,
-                    min_starports: None
+                    min_starports: None,
+                    exclude_permit_locked: false,
                 },
                 &input,
             ),
@@ -256,7 +337,8 @@ mod tests {
                     reference: None,
                     max_distance_from_reference: None,
                     min_population: None,
-                    min_starports: Some(3)
+                    min_starports: Some(3),
+                    exclude_permit_locked: false,
                 },
                 &input,
             ),
@@ -280,7 +362,8 @@ mod tests {
                     reference: None,
                     max_distance_from_reference: None,
                     min_population: None,
-                    min_starports: None
+                    min_starports: None,
+                    exclude_permit_locked: false,
                 },
                 &input,
             ),
@@ -324,11 +407,57 @@ mod tests {
                     reference: None,
                     max_distance_from_reference: None,
                     min_population: None,
-                    min_starports: None
+                    min_starports: None,
+                    exclude_permit_locked: false,
                 },
                 &input,
             ),
             vec![sol]
+        )
+    }
+
+    #[test]
+    fn permit_locked_systems_skipped() {
+        let sanos = make_system(
+            "Sanos",
+            2,
+            5,
+            Option::from(EdsmCoords {
+                x: 73.875_f64,
+                y: -3.5625_f64,
+                z: -52.625_f64,
+            }),
+            Option::from(10000_u128),
+        );
+        let input = [
+            sanos.clone(),
+            make_system(
+                "Sol",
+                5,
+                5,
+                Option::from(EdsmCoords {
+                    x: f64::from(0),
+                    y: f64::from(0),
+                    z: f64::from(0),
+                }),
+                Option::from(10000_u128),
+            ),
+        ];
+        assert_eq!(
+            filter(
+                &SearchOptions {
+                    min_large_docks: None,
+                    min_docks: None,
+                    max_distance_from_sol: None,
+                    reference: None,
+                    max_distance_from_reference: None,
+                    min_population: None,
+                    min_starports: None,
+                    exclude_permit_locked: true,
+                },
+                &input,
+            ),
+            vec![sanos]
         )
     }
 
@@ -372,7 +501,8 @@ mod tests {
                     }),
                     max_distance_from_reference: Some(90.0),
                     min_population: None,
-                    min_starports: None
+                    min_starports: None,
+                    exclude_permit_locked: false,
                 },
                 &input,
             ),
@@ -416,7 +546,8 @@ mod tests {
                     reference: None,
                     max_distance_from_reference: None,
                     min_population: Option::from(10000_u128),
-                    min_starports: None
+                    min_starports: None,
+                    exclude_permit_locked: false,
                 },
                 &input,
             ),
