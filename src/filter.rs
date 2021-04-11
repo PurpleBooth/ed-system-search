@@ -67,6 +67,7 @@ pub fn filter<'a, T: System + Clone>(
     systems
 }
 
+#[allow(clippy::too_many_lines)]
 fn is_exclude_rare_commodity_system<T: System>(system: &T) -> bool {
     matches!(
         system.name(),
