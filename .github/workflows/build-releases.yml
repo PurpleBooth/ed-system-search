@@ -145,7 +145,7 @@ jobs:
         asset_name: ${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-x86_64-apple-darwin
         asset_content_type: application/octet-stream
     - uses: actions/upload-release-asset@v1.0.2
-      name: Upload x86_64-apple-darwin binaries to release
+      name: Upload x86_64-pc-windows-msvc binaries to release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
