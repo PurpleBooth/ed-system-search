@@ -21,9 +21,10 @@ ARGS:
     <edsm-path>    This is the path to th EDSM dump in .json.gz format
 
 FLAGS:
-        --exclude-permit-locked    Exclude permit locked systems
-    -h, --help                     Prints help information
-    -V, --version                  Prints version information
+        --exclude-permit-locked     Exclude permit locked systems
+        --exclude-rare-commodity    Exclude systems that sell rare commodities
+    -h, --help                      Prints help information
+    -V, --version                   Prints version information
 
 OPTIONS:
         --max-distance-from-reference <LIGHT_SECONDS>

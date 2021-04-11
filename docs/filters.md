@@ -1,6 +1,26 @@
 # Filters
 
-## Permit locked systems
+## Exclude rare commodity systems
+
+Exclude rare commodity systems
+
+``` shell,script(name="exclude-rare-commodity",expected_exit_code=0)
+ed-system-search --exclude-rare-commodity --max-distance-from-sol 10 "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="exclude-rare-commodity",stream=stdout)
+Barnard's Star
+Duamta
+Luhman 16
+Ross 154
+Sirius
+Sol
+WISE 0855-0714
+Wolf 359
+```
+
+
+## Exclude permit locked systems
 
 Exclude permit locked systems
 

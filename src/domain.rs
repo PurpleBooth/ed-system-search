@@ -26,4 +26,5 @@ pub struct SearchOptions {
     pub(crate) min_population: Option<u128>,
     pub(crate) min_starports: Option<usize>,
     pub(crate) exclude_permit_locked: bool,
+    pub exclude_rare_commodity: bool,
 }

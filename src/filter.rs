@@ -52,12 +52,150 @@ pub fn filter<'a, T: System + Clone>(
             } else {
                 true
             }
+        })
+        .filter(|system| {
+            if search_options.exclude_rare_commodity {
+                !is_exclude_rare_commodity_system(*system)
+            } else {
+                true
+            }
         }))
     .cloned()
     .collect();
 
     systems.sort_by(|a, b| a.name().cmp(b.name()));
     systems
+}
+
+fn is_exclude_rare_commodity_system<T: System>(system: &T) -> bool {
+    matches!(
+        system.name(),
+        "47 Ceti"
+            | "Aganippe"
+            | "Alacarakmo"
+            | "Quechua"
+            | "Altair"
+            | "Alya"
+            | "Anduliga"
+            | "Any Na"
+            | "Arouca"
+            | "AZ Cancri"
+            | "Leesti"
+            | "BaltahSine"
+            | "Banki"
+            | "Bast"
+            | "Belalans"
+            | "Borasetani"
+            | "HIP 59533"
+            | "CD-75 661"
+            | "Alpha Centauri"
+            | "Heike"
+            | "LDS 883"
+            | "Aegaeon"
+            | "Cherbones"
+            | "Chi Eridani"
+            | "Coquim"
+            | "Crom"
+            | "Bento"
+            | "Damna"
+            | "Delta Phoenicis"
+            | "Deuringas"
+            | "Diso"
+            | "Aerial"
+            | "Eleu"
+            | "Eranin"
+            | "Eshu"
+            | "Esuseku"
+            | "Ethgreze"
+            | "Fujin"
+            | "LHS 3447"
+            | "Geawen"
+            | "Geras"
+            | "Irukama"
+            | "Phiagre"
+            | "Gilya"
+            | "Goman"
+            | "Haiden"
+            | "Havasupai"
+            | "Helvetitj"
+            | "HIP 10175"
+            | "HIP 118311"
+            | "HIP 80364"
+            | "HIP 41181"
+            | "Holva"
+            | "LP 375-25"
+            | "HR 7221"
+            | "Epsilon Indi"
+            | "Colonia"
+            | "Jaradharre"
+            | "Jaroua"
+            | "Jotun"
+            | "Kachirigin"
+            | "Kamitra"
+            | "Kamorin"
+            | "Karetii"
+            | "Karsuki Ti"
+            | "Kinago"
+            | "Kongga"
+            | "Korro Kung"
+            | "Lave"
+            | "Zaonce"
+            | "Hecate"
+            | "LTT 9360"
+            | "Tanmark"
+            | "Noti"
+            | "Mechucos"
+            | "Medb"
+            | "Mokojing"
+            | "Momus Reach"
+            | "Dea Motrona"
+            | "Mukusubii"
+            | "Mulachi"
+            | "Neritus"
+            | "Ngadandari"
+            | "Nguna"
+            | "Njangari"
+            | "LTT 8517"
+            | "Ochoeng"
+            | "Kappa Fornacis"
+            | "Xelabara"
+            | "HIP 112974"
+            | "36 Ophiuchi"
+            | "Orrere"
+            | "George Pantazis"
+            | "Delta Pavonis"
+            | "Njambalba"
+            | "Rajukru"
+            | "Rapa Bao"
+            | "Rusani"
+            | "Sanuma"
+            | "Arque"
+            | "Ngurii"
+            | "Sothis"
+            | "Tarach Tor"
+            | "Terra Mater"
+            | "Thrutis"
+            | "Tiolce"
+            | "Toxandji"
+            | "17 Lyrae"
+            | "Uszaa"
+            | "Utgaroar"
+            | "Uzumoku"
+            | "V1090 Herculis"
+            | "Vanayequi"
+            | "Vega"
+            | "Vidavanta"
+            | "LFT 1421"
+            | "Volkhab"
+            | "Shinrarta Dezhra"
+            | "Wheemete"
+            | "Witchhaul"
+            | "Wolf 1301"
+            | "Wulpa"
+            | "Wuthielo Ku"
+            | "Xihe"
+            | "Yaso Kondi"
+    )
 }
 
 fn is_permit_locked_system<T: System>(system: &T) -> bool {
@@ -289,6 +427,7 @@ mod tests {
                     min_population: None,
                     min_starports: None,
                     exclude_permit_locked: false,
+                    exclude_rare_commodity: false
                 },
                 &input,
             ),
@@ -314,6 +453,7 @@ mod tests {
                     min_population: None,
                     min_starports: None,
                     exclude_permit_locked: false,
+                    exclude_rare_commodity: false
                 },
                 &input,
             ),
@@ -339,6 +479,7 @@ mod tests {
                     min_population: None,
                     min_starports: Some(3),
                     exclude_permit_locked: false,
+                    exclude_rare_commodity: false
                 },
                 &input,
             ),
@@ -364,6 +505,7 @@ mod tests {
                     min_population: None,
                     min_starports: None,
                     exclude_permit_locked: false,
+                    exclude_rare_commodity: false
                 },
                 &input,
             ),
@@ -409,6 +551,7 @@ mod tests {
                     min_population: None,
                     min_starports: None,
                     exclude_permit_locked: false,
+                    exclude_rare_commodity: false,
                 },
                 &input,
             ),
@@ -454,6 +597,53 @@ mod tests {
                     min_population: None,
                     min_starports: None,
                     exclude_permit_locked: true,
+                    exclude_rare_commodity: false,
+                },
+                &input,
+            ),
+            vec![sanos]
+        )
+    }
+
+    #[test]
+    fn rare_commodity_systems_skipped() {
+        let sanos = make_system(
+            "Sanos",
+            2,
+            5,
+            Option::from(EdsmCoords {
+                x: 73.875_f64,
+                y: -3.5625_f64,
+                z: -52.625_f64,
+            }),
+            Option::from(10000_u128),
+        );
+        let input = [
+            sanos.clone(),
+            make_system(
+                "Alpha Centauri",
+                5,
+                5,
+                Option::from(EdsmCoords {
+                    x: f64::from(0),
+                    y: f64::from(0),
+                    z: f64::from(0),
+                }),
+                Option::from(10000_u128),
+            ),
+        ];
+        assert_eq!(
+            filter(
+                &SearchOptions {
+                    min_large_docks: None,
+                    min_docks: None,
+                    max_distance_from_sol: None,
+                    reference: None,
+                    max_distance_from_reference: None,
+                    min_population: None,
+                    min_starports: None,
+                    exclude_permit_locked: false,
+                    exclude_rare_commodity: true,
                 },
                 &input,
             ),
@@ -503,6 +693,8 @@ mod tests {
                     min_population: None,
                     min_starports: None,
                     exclude_permit_locked: false,
+
+                    exclude_rare_commodity: false,
                 },
                 &input,
             ),
@@ -548,6 +740,8 @@ mod tests {
                     min_population: Option::from(10000_u128),
                     min_starports: None,
                     exclude_permit_locked: false,
+
+                    exclude_rare_commodity: false,
                 },
                 &input,
             ),

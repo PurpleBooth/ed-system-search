@@ -95,6 +95,15 @@ pub fn app() -> App<'static> {
                 .takes_value(false)
                 .required(false),
         )
+        .arg(
+            Arg::new("exclude-rare-commodity")
+                .about(
+                    "Exclude systems that sell rare commodities"
+                )
+                .long("exclude-rare-commodity")
+                .takes_value(false)
+                .required(false),
+        )
 }
 
 pub fn parameters_from_matches<T: System>(
@@ -138,6 +147,7 @@ pub fn parameters_from_matches<T: System>(
             .map(|value| usize::from_str(value).map_err(Error::from))
             .map_or(Ok(None), |v| v.map(Some))?,
         exclude_permit_locked: matches.is_present("exclude-permit-locked"),
+        exclude_rare_commodity: matches.is_present("exclude-rare-commodity"),
     })
 }
 
@@ -170,7 +180,8 @@ mod tests {
                 max_distance_from_reference: None,
                 min_population: None,
                 min_starports: None,
-                exclude_permit_locked: false
+                exclude_permit_locked: false,
+                exclude_rare_commodity: false
             }
         )
     }
@@ -205,7 +216,8 @@ mod tests {
                 max_distance_from_reference: None,
                 min_population: None,
                 min_starports: None,
-                exclude_permit_locked: false
+                exclude_permit_locked: false,
+                exclude_rare_commodity: false
             }
         )
     }
@@ -240,7 +252,8 @@ mod tests {
                 max_distance_from_reference: None,
                 min_population: Some(10),
                 min_starports: None,
-                exclude_permit_locked: false
+                exclude_permit_locked: false,
+                exclude_rare_commodity: false
             }
         )
     }
@@ -275,7 +288,8 @@ mod tests {
                 max_distance_from_reference: None,
                 min_population: None,
                 min_starports: None,
-                exclude_permit_locked: false
+                exclude_permit_locked: false,
+                exclude_rare_commodity: false
             }
         )
     }
@@ -310,7 +324,8 @@ mod tests {
                 reference: None,
                 max_distance_from_reference: None,
                 min_population: None,
-                exclude_permit_locked: false
+                exclude_permit_locked: false,
+                exclude_rare_commodity: false
             }
         )
     }
@@ -345,7 +360,8 @@ mod tests {
                 reference: None,
                 max_distance_from_reference: None,
                 min_starports: None,
-                exclude_permit_locked: false
+                exclude_permit_locked: false,
+                exclude_rare_commodity: false
             }
         )
     }
@@ -367,7 +383,31 @@ mod tests {
                 reference: None,
                 max_distance_from_reference: None,
                 min_starports: None,
-                exclude_permit_locked: true
+                exclude_permit_locked: true,
+                exclude_rare_commodity: false
+            }
+        )
+    }
+
+    #[test]
+    fn exclude_rare_commodity() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--exclude-rare-commodity",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
+            SearchOptions {
+                min_large_docks: None,
+                min_docks: None,
+                min_population: None,
+                max_distance_from_sol: None,
+                reference: None,
+                max_distance_from_reference: None,
+                min_starports: None,
+                exclude_permit_locked: false,
+                exclude_rare_commodity: true
             }
         )
     }
@@ -402,7 +442,8 @@ mod tests {
                 max_distance_from_reference: None,
                 min_population: None,
                 min_starports: None,
-                exclude_permit_locked: false
+                exclude_permit_locked: false,
+                exclude_rare_commodity: false
             }
         )
     }
@@ -496,7 +537,8 @@ mod tests {
                 max_distance_from_reference: Some(10_f64),
                 min_population: None,
                 min_starports: None,
-                exclude_permit_locked: false
+                exclude_permit_locked: false,
+                exclude_rare_commodity: false
             }
         )
     }
