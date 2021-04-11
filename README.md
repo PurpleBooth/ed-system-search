@@ -52,3 +52,14 @@ OPTIONS:
 
         --reference <SYSTEM_NAME>                        A reference system used by other filters
 ```
+
+## Installing
+
+See the [releases
+page](https://github.com/PurpleBooth/ed-system-search/releases/latest)
+we build for windows, linux and mac (all x86\_64), alternatively use
+brew
+
+``` shell,skip()
+brew install PurpleBooth/repo/ed-system-search
+```
