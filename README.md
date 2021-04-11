@@ -10,7 +10,7 @@ ed-system-search --help
 ```
 
 ``` text,verify(script_name="help",stream=stdout)
-ed-system-search 0.6.0
+ed-system-search 0.7.0
 Billie Thompson <billie@billiecodes.com>
 Find interesting systems in the EDSM data dump
 
