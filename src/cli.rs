@@ -6,6 +6,7 @@ use thiserror::Error as ThisError;
 
 use crate::domain::{SearchOptions, System};
 
+#[allow(clippy::too_many_lines)]
 pub fn app() -> App<'static> {
     App::new(String::from(env!("CARGO_PKG_NAME")))
         .bin_name(String::from(env!("CARGO_PKG_NAME")))
@@ -66,16 +67,27 @@ pub fn app() -> App<'static> {
                 .takes_value(true)
                 .value_name("LIGHT_SECONDS")
                 .required(false),
-        ).arg(
-        Arg::new("max-distance-from-reference")
-            .about(
-                "Filter the systems that are further than this distance from the reference"
-            )
-            .long("max-distance-from-reference")
-            .takes_value(true)
-            .value_name("LIGHT_SECONDS")
-            .required(false),
-    )
+        )
+        .arg(
+            Arg::new("max-distance-from-reference")
+                .about(
+                    "Filter the systems that are further than this distance from the reference"
+                )
+                .long("max-distance-from-reference")
+                .takes_value(true)
+                .value_name("LIGHT_SECONDS")
+                .required(false),
+        )
+        .arg(
+            Arg::new("max-number-of-factions")
+                .about(
+                    "Filter the systems that have more factions than the number given"
+                )
+                .long("max-number-of-factions")
+                .takes_value(true)
+                .value_name("COUNT")
+                .required(false),
+        )
         .arg(
             Arg::new("reference")
                 .about(
@@ -146,6 +158,10 @@ pub fn parameters_from_matches<T: System>(
             .value_of("min-starports")
             .map(|value| usize::from_str(value).map_err(Error::from))
             .map_or(Ok(None), |v| v.map(Some))?,
+        max_number_of_factions: matches
+            .value_of("max-number-of-factions")
+            .map(|value| usize::from_str(value).map_err(Error::from))
+            .map_or(Ok(None), |v| v.map(Some))?,
         exclude_permit_locked: matches.is_present("exclude-permit-locked"),
         exclude_rare_commodity: matches.is_present("exclude-rare-commodity"),
     })
@@ -181,7 +197,8 @@ mod tests {
                 min_population: None,
                 min_starports: None,
                 exclude_permit_locked: false,
-                exclude_rare_commodity: false
+                exclude_rare_commodity: false,
+                max_number_of_factions: None
             }
         )
     }
@@ -217,7 +234,8 @@ mod tests {
                 min_population: None,
                 min_starports: None,
                 exclude_permit_locked: false,
-                exclude_rare_commodity: false
+                exclude_rare_commodity: false,
+                max_number_of_factions: None
             }
         )
     }
@@ -253,7 +271,8 @@ mod tests {
                 min_population: Some(10),
                 min_starports: None,
                 exclude_permit_locked: false,
-                exclude_rare_commodity: false
+                exclude_rare_commodity: false,
+                max_number_of_factions: None
             }
         )
     }
@@ -289,7 +308,8 @@ mod tests {
                 min_population: None,
                 min_starports: None,
                 exclude_permit_locked: false,
-                exclude_rare_commodity: false
+                exclude_rare_commodity: false,
+                max_number_of_factions: None
             }
         )
     }
@@ -325,7 +345,8 @@ mod tests {
                 max_distance_from_reference: None,
                 min_population: None,
                 exclude_permit_locked: false,
-                exclude_rare_commodity: false
+                exclude_rare_commodity: false,
+                max_number_of_factions: None
             }
         )
     }
@@ -361,7 +382,8 @@ mod tests {
                 max_distance_from_reference: None,
                 min_starports: None,
                 exclude_permit_locked: false,
-                exclude_rare_commodity: false
+                exclude_rare_commodity: false,
+                max_number_of_factions: None
             }
         )
     }
@@ -384,7 +406,8 @@ mod tests {
                 max_distance_from_reference: None,
                 min_starports: None,
                 exclude_permit_locked: true,
-                exclude_rare_commodity: false
+                exclude_rare_commodity: false,
+                max_number_of_factions: None
             }
         )
     }
@@ -407,7 +430,45 @@ mod tests {
                 max_distance_from_reference: None,
                 min_starports: None,
                 exclude_permit_locked: false,
-                exclude_rare_commodity: true
+                exclude_rare_commodity: true,
+                max_number_of_factions: None
+            }
+        )
+    }
+
+    #[test]
+    fn max_factions_invalid() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--max-number-of-factions=banana",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(&args, &[] as &[stub::System]).is_err(),
+            true
+        )
+    }
+
+    #[test]
+    fn max_factions_present() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--max-number-of-factions=10",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
+            SearchOptions {
+                min_large_docks: None,
+                min_docks: None,
+                max_distance_from_sol: None,
+                max_number_of_factions: Some(10),
+                reference: None,
+                max_distance_from_reference: None,
+                min_population: None,
+                min_starports: None,
+                exclude_permit_locked: false,
+                exclude_rare_commodity: false,
             }
         )
     }
@@ -443,7 +504,8 @@ mod tests {
                 min_population: None,
                 min_starports: None,
                 exclude_permit_locked: false,
-                exclude_rare_commodity: false
+                exclude_rare_commodity: false,
+                max_number_of_factions: None
             }
         )
     }
@@ -467,7 +529,8 @@ mod tests {
                         z: f64::from(0),
                     },
                     stations: vec![],
-                    population: 0
+                    population: 0,
+                    factions: vec![]
                 }],
             )
             .is_err(),
@@ -494,7 +557,8 @@ mod tests {
                         z: f64::from(0),
                     },
                     stations: vec![],
-                    population: 0
+                    population: 0,
+                    factions: vec![]
                 }],
             )
             .is_err(),
@@ -521,7 +585,8 @@ mod tests {
                         z: f64::from(0),
                     },
                     stations: vec![],
-                    population: 0
+                    population: 0,
+                    factions: vec![]
                 }],
             )
             .unwrap(),
@@ -532,13 +597,14 @@ mod tests {
                 reference: Some(Coords {
                     x: f64::from(0),
                     y: f64::from(0),
-                    z: f64::from(0)
+                    z: f64::from(0),
                 }),
                 max_distance_from_reference: Some(10_f64),
                 min_population: None,
                 min_starports: None,
                 exclude_permit_locked: false,
-                exclude_rare_commodity: false
+                exclude_rare_commodity: false,
+                max_number_of_factions: None
             }
         )
     }

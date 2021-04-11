@@ -196,6 +196,37 @@ Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
 ```
 
 
+## Max number of factions
+
+You can skip systems with more than a number of factions
+
+``` shell,script(name="max-number-of-factions",expected_exit_code=0)
+ed-system-search --max-number-of-factions 1 "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="max-number-of-factions",stream=stdout)
+4 Sextantis
+Capricorni Sector KC-V c2-13
+Col 285 Sector MH-V d2-50
+HIP 22460
+HIP 58832
+HIP 89396
+HIP 90024
+Hyades Sector RI-T c3-11
+Mbooni
+```
+
+if it's not a number it'll fail
+
+``` shell,script(name="max-number-of-factions-err",expected_exit_code=1)
+ed-system-search --max-number-of-factions banana "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="max-number-of-factions-err",stream=stderr)
+Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
+```
+
+
 ## Max distance from sol system
 
 You can search by distance from sol

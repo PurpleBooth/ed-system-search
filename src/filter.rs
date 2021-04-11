@@ -28,6 +28,13 @@ pub fn filter<'a, T: System + Clone>(
         })
         .filter(|system| {
             search_options
+                .max_number_of_factions
+                .map_or(true, |factions| {
+                    has_max_number_of_factions(factions, *system)
+                })
+        })
+        .filter(|system| {
+            search_options
                 .min_docks
                 .map_or(true, |docks| has_min_docks(docks, *system))
         })
@@ -322,6 +329,10 @@ fn has_min_docks<T: System>(min_large_docks: usize, system: &T) -> bool {
         >= min_large_docks
 }
 
+fn has_max_number_of_factions<T: System>(max_factions: usize, system: &T) -> bool {
+    system.factions().len() <= max_factions
+}
+
 fn has_min_population<T: System>(min_population: u128, system: &T) -> bool {
     system.population() >= min_population
 }
@@ -365,6 +376,8 @@ mod tests {
         small_docks: usize,
         coordinates: Option<EdsmCoords>,
         population: Option<u128>,
+        player_factions: bool,
+        faction_count: usize,
     ) -> EdsmSystem {
         let mut large_station_types = [
             "Asteroid base",
@@ -403,10 +416,15 @@ mod tests {
             controlling_faction: EdsmControllingFaction {
                 allegiance: Some("Federation".to_string()),
             },
-            factions: Some(vec![
-                EdsmFaction { is_player: true },
-                EdsmFaction { is_player: false },
-            ]),
+            factions: Some(
+                vec![EdsmFaction {
+                    is_player: player_factions,
+                }]
+                .into_iter()
+                .cycle()
+                .take(faction_count)
+                .collect(),
+            ),
             stations: Some(stations.collect()),
         }
     }
@@ -414,8 +432,8 @@ mod tests {
     #[test]
     fn no_options_returns_everything() {
         let input = [
-            make_system("Sanos", 5, 5, None, Option::from(10000_u128)),
-            make_system("Sol", 5, 5, None, Option::from(10000_u128)),
+            make_system("Sanos", 5, 5, None, Option::from(10000_u128), true, 5),
+            make_system("Sol", 5, 5, None, Option::from(10000_u128), true, 5),
         ];
         assert_eq!(
             filter(
@@ -428,7 +446,8 @@ mod tests {
                     min_population: None,
                     min_starports: None,
                     exclude_permit_locked: false,
-                    exclude_rare_commodity: false
+                    exclude_rare_commodity: false,
+                    max_number_of_factions: None
                 },
                 &input,
             ),
@@ -438,9 +457,9 @@ mod tests {
 
     #[test]
     fn systems_without_enough_large_docks_are_skipped() {
-        let sol = make_system("Sol", 5, 5, None, Option::from(10000_u128));
+        let sol = make_system("Sol", 5, 5, None, Option::from(10000_u128), true, 5);
         let input = [
-            make_system("Sanos", 2, 5, None, Option::from(10000_u128)),
+            make_system("Sanos", 2, 5, None, Option::from(10000_u128), true, 5),
             sol.clone(),
         ];
         assert_eq!(
@@ -454,7 +473,8 @@ mod tests {
                     min_population: None,
                     min_starports: None,
                     exclude_permit_locked: false,
-                    exclude_rare_commodity: false
+                    exclude_rare_commodity: false,
+                    max_number_of_factions: None
                 },
                 &input,
             ),
@@ -464,9 +484,9 @@ mod tests {
 
     #[test]
     fn systems_without_enough_starports_are_skipped() {
-        let sol = make_system("Sol", 4, 5, None, Option::from(10000_u128));
+        let sol = make_system("Sol", 4, 5, None, Option::from(10000_u128), true, 5);
         let input = [
-            make_system("Sanos", 3, 5, None, Option::from(10000_u128)),
+            make_system("Sanos", 3, 5, None, Option::from(10000_u128), true, 5),
             sol.clone(),
         ];
         assert_eq!(
@@ -480,7 +500,8 @@ mod tests {
                     min_population: None,
                     min_starports: Some(3),
                     exclude_permit_locked: false,
-                    exclude_rare_commodity: false
+                    exclude_rare_commodity: false,
+                    max_number_of_factions: None
                 },
                 &input,
             ),
@@ -490,9 +511,9 @@ mod tests {
 
     #[test]
     fn systems_without_enough_docks_are_skipped() {
-        let sol = make_system("Sol", 5, 5, None, Option::from(10000_u128));
+        let sol = make_system("Sol", 5, 5, None, Option::from(10000_u128), true, 5);
         let input = [
-            make_system("Sanos", 2, 5, None, Option::from(10000_u128)),
+            make_system("Sanos", 2, 5, None, Option::from(10000_u128), true, 5),
             sol.clone(),
         ];
         assert_eq!(
@@ -506,7 +527,8 @@ mod tests {
                     min_population: None,
                     min_starports: None,
                     exclude_permit_locked: false,
-                    exclude_rare_commodity: false
+                    exclude_rare_commodity: false,
+                    max_number_of_factions: None
                 },
                 &input,
             ),
@@ -526,6 +548,8 @@ mod tests {
                 z: f64::from(0),
             }),
             Option::from(10000_u128),
+            true,
+            5,
         );
         let input = [
             make_system(
@@ -538,6 +562,8 @@ mod tests {
                     z: -52.625_f64,
                 }),
                 Option::from(10000_u128),
+                true,
+                5,
             ),
             sol.clone(),
         ];
@@ -553,6 +579,7 @@ mod tests {
                     min_starports: None,
                     exclude_permit_locked: false,
                     exclude_rare_commodity: false,
+                    max_number_of_factions: None
                 },
                 &input,
             ),
@@ -572,6 +599,8 @@ mod tests {
                 z: -52.625_f64,
             }),
             Option::from(10000_u128),
+            true,
+            5,
         );
         let input = [
             sanos.clone(),
@@ -585,6 +614,8 @@ mod tests {
                     z: f64::from(0),
                 }),
                 Option::from(10000_u128),
+                true,
+                5,
             ),
         ];
         assert_eq!(
@@ -599,6 +630,7 @@ mod tests {
                     min_starports: None,
                     exclude_permit_locked: true,
                     exclude_rare_commodity: false,
+                    max_number_of_factions: None
                 },
                 &input,
             ),
@@ -618,6 +650,8 @@ mod tests {
                 z: -52.625_f64,
             }),
             Option::from(10000_u128),
+            true,
+            5,
         );
         let input = [
             sanos.clone(),
@@ -631,6 +665,8 @@ mod tests {
                     z: f64::from(0),
                 }),
                 Option::from(10000_u128),
+                true,
+                5,
             ),
         ];
         assert_eq!(
@@ -645,6 +681,7 @@ mod tests {
                     min_starports: None,
                     exclude_permit_locked: false,
                     exclude_rare_commodity: true,
+                    max_number_of_factions: None
                 },
                 &input,
             ),
@@ -664,6 +701,8 @@ mod tests {
                 z: f64::from(0),
             }),
             Option::from(10000_u128),
+            true,
+            5,
         );
         let input = [
             make_system(
@@ -676,6 +715,8 @@ mod tests {
                     z: -52.625_f64,
                 }),
                 Option::from(10000_u128),
+                true,
+                5,
             ),
             sol.clone(),
         ];
@@ -696,6 +737,7 @@ mod tests {
                     exclude_permit_locked: false,
 
                     exclude_rare_commodity: false,
+                    max_number_of_factions: None
                 },
                 &input,
             ),
@@ -715,6 +757,8 @@ mod tests {
                 z: f64::from(0),
             }),
             Option::from(10000_u128),
+            true,
+            5,
         );
         let input = [
             make_system(
@@ -727,6 +771,8 @@ mod tests {
                     z: -52.625_f64,
                 }),
                 Option::from(9999_u128),
+                true,
+                5,
             ),
             sol.clone(),
         ];
@@ -743,6 +789,59 @@ mod tests {
                     exclude_permit_locked: false,
 
                     exclude_rare_commodity: false,
+                    max_number_of_factions: None
+                },
+                &input,
+            ),
+            vec![sol]
+        )
+    }
+
+    #[test]
+    fn systems_with_too_many_factions_are_ignored_ignored() {
+        let sol = make_system(
+            "Sol",
+            5,
+            5,
+            Option::from(EdsmCoords {
+                x: f64::from(0),
+                y: f64::from(0),
+                z: f64::from(0),
+            }),
+            Option::from(10000_u128),
+            false,
+            5,
+        );
+        let input = [
+            make_system(
+                "Sanos",
+                2,
+                5,
+                Option::from(EdsmCoords {
+                    x: 73.875_f64,
+                    y: -3.5625_f64,
+                    z: -52.625_f64,
+                }),
+                Option::from(9999_u128),
+                true,
+                10,
+            ),
+            sol.clone(),
+        ];
+        assert_eq!(
+            filter(
+                &SearchOptions {
+                    min_large_docks: None,
+                    min_docks: None,
+                    max_distance_from_sol: None,
+                    reference: None,
+                    max_distance_from_reference: None,
+                    min_population: None,
+                    min_starports: None,
+                    exclude_permit_locked: false,
+
+                    exclude_rare_commodity: false,
+                    max_number_of_factions: Some(7)
                 },
                 &input,
             ),

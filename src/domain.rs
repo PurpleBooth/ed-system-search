@@ -8,12 +8,17 @@ pub struct Coords {
 pub trait System {
     fn name(&self) -> &str;
     fn stations(&self) -> Vec<Box<dyn Station>>;
+    fn factions(&self) -> Vec<Box<dyn Faction>>;
     fn coordinates(&self) -> Coords;
     fn population(&self) -> u128;
 }
 
 pub trait Station {
     fn station_type(&self) -> &str;
+}
+
+pub trait Faction {
+    fn is_player(&self) -> bool;
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -26,5 +31,6 @@ pub struct SearchOptions {
     pub(crate) min_population: Option<u128>,
     pub(crate) min_starports: Option<usize>,
     pub(crate) exclude_permit_locked: bool,
-    pub exclude_rare_commodity: bool,
+    pub(crate) exclude_rare_commodity: bool,
+    pub(crate) max_number_of_factions: Option<usize>,
 }

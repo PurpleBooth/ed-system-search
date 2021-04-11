@@ -60,6 +60,18 @@ impl domain::System for System {
             .unwrap_or_default()
     }
 
+    fn factions(&self) -> Vec<Box<dyn domain::Faction>> {
+        self.factions
+            .clone()
+            .map(|factions| {
+                factions
+                    .into_iter()
+                    .map(|x| -> Box<dyn domain::Faction> { Box::from(x) })
+                    .collect::<Vec<Box<dyn domain::Faction>>>()
+            })
+            .unwrap_or_default()
+    }
+
     fn coordinates(&self) -> DomainCoords {
         DomainCoords {
             x: self.coords.x,
@@ -76,6 +88,12 @@ impl domain::System for System {
 impl domain::Station for Station {
     fn station_type(&self) -> &str {
         self.station_type.as_str()
+    }
+}
+
+impl domain::Faction for Faction {
+    fn is_player(&self) -> bool {
+        self.is_player
     }
 }
 

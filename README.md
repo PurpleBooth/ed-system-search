@@ -33,6 +33,9 @@ OPTIONS:
         --max-distance-from-sol <LIGHT_SECONDS>
             Filter the systems that are further than this distance from sol
 
+        --max-number-of-factions <COUNT>
+            Filter the systems that have more factions than the number given
+
         --min-docks <COUNT>
             Filter the systems that are have less than the given number of docks
 

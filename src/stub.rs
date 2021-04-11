@@ -3,6 +3,7 @@ use crate::domain;
 #[derive(Debug, PartialEq, Clone)]
 pub struct System {
     pub(crate) stations: Vec<Station>,
+    pub(crate) factions: Vec<Faction>,
     pub(crate) coords: crate::domain::Coords,
     pub(crate) name: String,
     pub(crate) population: u128,
@@ -19,6 +20,14 @@ impl crate::domain::System for System {
             .into_iter()
             .map(|x| -> Box<dyn domain::Station> { Box::from(x) })
             .collect::<Vec<Box<dyn domain::Station>>>()
+    }
+
+    fn factions(&self) -> Vec<Box<dyn domain::Faction>> {
+        self.factions
+            .clone()
+            .into_iter()
+            .map(|x| -> Box<dyn domain::Faction> { Box::from(x) })
+            .collect::<Vec<Box<dyn domain::Faction>>>()
     }
 
     fn coordinates(&self) -> crate::domain::Coords {
@@ -38,5 +47,16 @@ pub struct Station {
 impl crate::domain::Station for Station {
     fn station_type(&self) -> &str {
         self.station_type.as_str()
+    }
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub struct Faction {
+    is_player: bool,
+}
+
+impl crate::domain::Faction for Faction {
+    fn is_player(&self) -> bool {
+        self.is_player
     }
 }
