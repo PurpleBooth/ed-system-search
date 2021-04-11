@@ -33,4 +33,5 @@ pub struct SearchOptions {
     pub(crate) exclude_permit_locked: bool,
     pub(crate) exclude_rare_commodity: bool,
     pub(crate) max_number_of_factions: Option<usize>,
+    pub(crate) exclude_player_faction: bool,
 }

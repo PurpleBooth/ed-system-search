@@ -22,6 +22,7 @@ ARGS:
 
 FLAGS:
         --exclude-permit-locked     Exclude permit locked systems
+        --exclude-player-faction    Exclude systems that contain a player faction
         --exclude-rare-commodity    Exclude systems that sell rare commodities
     -h, --help                      Prints help information
     -V, --version                   Prints version information

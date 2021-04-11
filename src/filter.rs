@@ -34,6 +34,13 @@ pub fn filter<'a, T: System + Clone>(
                 })
         })
         .filter(|system| {
+            if search_options.exclude_player_faction {
+                !has_player_faction(*system)
+            } else {
+                true
+            }
+        })
+        .filter(|system| {
             search_options
                 .min_docks
                 .map_or(true, |docks| has_min_docks(docks, *system))
@@ -333,6 +340,10 @@ fn has_max_number_of_factions<T: System>(max_factions: usize, system: &T) -> boo
     system.factions().len() <= max_factions
 }
 
+fn has_player_faction<T: System>(system: &T) -> bool {
+    system.factions().iter().any(|faction| faction.is_player())
+}
+
 fn has_min_population<T: System>(min_population: u128, system: &T) -> bool {
     system.population() >= min_population
 }
@@ -447,7 +458,8 @@ mod tests {
                     min_starports: None,
                     exclude_permit_locked: false,
                     exclude_rare_commodity: false,
-                    max_number_of_factions: None
+                    max_number_of_factions: None,
+                    exclude_player_faction: false
                 },
                 &input,
             ),
@@ -474,7 +486,8 @@ mod tests {
                     min_starports: None,
                     exclude_permit_locked: false,
                     exclude_rare_commodity: false,
-                    max_number_of_factions: None
+                    max_number_of_factions: None,
+                    exclude_player_faction: false
                 },
                 &input,
             ),
@@ -501,7 +514,8 @@ mod tests {
                     min_starports: Some(3),
                     exclude_permit_locked: false,
                     exclude_rare_commodity: false,
-                    max_number_of_factions: None
+                    max_number_of_factions: None,
+                    exclude_player_faction: false
                 },
                 &input,
             ),
@@ -528,7 +542,8 @@ mod tests {
                     min_starports: None,
                     exclude_permit_locked: false,
                     exclude_rare_commodity: false,
-                    max_number_of_factions: None
+                    max_number_of_factions: None,
+                    exclude_player_faction: false
                 },
                 &input,
             ),
@@ -579,7 +594,8 @@ mod tests {
                     min_starports: None,
                     exclude_permit_locked: false,
                     exclude_rare_commodity: false,
-                    max_number_of_factions: None
+                    max_number_of_factions: None,
+                    exclude_player_faction: false
                 },
                 &input,
             ),
@@ -630,7 +646,8 @@ mod tests {
                     min_starports: None,
                     exclude_permit_locked: true,
                     exclude_rare_commodity: false,
-                    max_number_of_factions: None
+                    max_number_of_factions: None,
+                    exclude_player_faction: false
                 },
                 &input,
             ),
@@ -681,7 +698,8 @@ mod tests {
                     min_starports: None,
                     exclude_permit_locked: false,
                     exclude_rare_commodity: true,
-                    max_number_of_factions: None
+                    max_number_of_factions: None,
+                    exclude_player_faction: false
                 },
                 &input,
             ),
@@ -737,7 +755,8 @@ mod tests {
                     exclude_permit_locked: false,
 
                     exclude_rare_commodity: false,
-                    max_number_of_factions: None
+                    max_number_of_factions: None,
+                    exclude_player_faction: false
                 },
                 &input,
             ),
@@ -789,7 +808,8 @@ mod tests {
                     exclude_permit_locked: false,
 
                     exclude_rare_commodity: false,
-                    max_number_of_factions: None
+                    max_number_of_factions: None,
+                    exclude_player_faction: false
                 },
                 &input,
             ),
@@ -841,7 +861,61 @@ mod tests {
                     exclude_permit_locked: false,
 
                     exclude_rare_commodity: false,
-                    max_number_of_factions: Some(7)
+                    max_number_of_factions: Some(7),
+                    exclude_player_faction: false
+                },
+                &input,
+            ),
+            vec![sol]
+        )
+    }
+
+    #[test]
+    fn systems_with_player_factions_are_ignored_ignored() {
+        let sol = make_system(
+            "Sol",
+            5,
+            5,
+            Option::from(EdsmCoords {
+                x: f64::from(0),
+                y: f64::from(0),
+                z: f64::from(0),
+            }),
+            Option::from(10000_u128),
+            false,
+            5,
+        );
+        let input = [
+            make_system(
+                "Sanos",
+                2,
+                5,
+                Option::from(EdsmCoords {
+                    x: 73.875_f64,
+                    y: -3.5625_f64,
+                    z: -52.625_f64,
+                }),
+                Option::from(9999_u128),
+                true,
+                10,
+            ),
+            sol.clone(),
+        ];
+        assert_eq!(
+            filter(
+                &SearchOptions {
+                    min_large_docks: None,
+                    min_docks: None,
+                    max_distance_from_sol: None,
+                    reference: None,
+                    max_distance_from_reference: None,
+                    min_population: None,
+                    min_starports: None,
+                    exclude_permit_locked: false,
+
+                    exclude_rare_commodity: false,
+                    max_number_of_factions: None,
+                    exclude_player_faction: true
                 },
                 &input,
             ),

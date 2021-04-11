@@ -108,6 +108,15 @@ pub fn app() -> App<'static> {
                 .required(false),
         )
         .arg(
+            Arg::new("exclude-player-faction")
+                .about(
+                    "Exclude systems that contain a player faction"
+                )
+                .long("exclude-player-faction")
+                .takes_value(false)
+                .required(false),
+        )
+        .arg(
             Arg::new("exclude-rare-commodity")
                 .about(
                     "Exclude systems that sell rare commodities"
@@ -164,6 +173,7 @@ pub fn parameters_from_matches<T: System>(
             .map_or(Ok(None), |v| v.map(Some))?,
         exclude_permit_locked: matches.is_present("exclude-permit-locked"),
         exclude_rare_commodity: matches.is_present("exclude-rare-commodity"),
+        exclude_player_faction: matches.is_present("exclude-player-faction"),
     })
 }
 
@@ -198,7 +208,8 @@ mod tests {
                 min_starports: None,
                 exclude_permit_locked: false,
                 exclude_rare_commodity: false,
-                max_number_of_factions: None
+                max_number_of_factions: None,
+                exclude_player_faction: false
             }
         )
     }
@@ -235,7 +246,8 @@ mod tests {
                 min_starports: None,
                 exclude_permit_locked: false,
                 exclude_rare_commodity: false,
-                max_number_of_factions: None
+                max_number_of_factions: None,
+                exclude_player_faction: false
             }
         )
     }
@@ -272,7 +284,8 @@ mod tests {
                 min_starports: None,
                 exclude_permit_locked: false,
                 exclude_rare_commodity: false,
-                max_number_of_factions: None
+                max_number_of_factions: None,
+                exclude_player_faction: false
             }
         )
     }
@@ -309,7 +322,8 @@ mod tests {
                 min_starports: None,
                 exclude_permit_locked: false,
                 exclude_rare_commodity: false,
-                max_number_of_factions: None
+                max_number_of_factions: None,
+                exclude_player_faction: false
             }
         )
     }
@@ -346,7 +360,8 @@ mod tests {
                 min_population: None,
                 exclude_permit_locked: false,
                 exclude_rare_commodity: false,
-                max_number_of_factions: None
+                max_number_of_factions: None,
+                exclude_player_faction: false
             }
         )
     }
@@ -383,7 +398,8 @@ mod tests {
                 min_starports: None,
                 exclude_permit_locked: false,
                 exclude_rare_commodity: false,
-                max_number_of_factions: None
+                max_number_of_factions: None,
+                exclude_player_faction: false
             }
         )
     }
@@ -407,7 +423,8 @@ mod tests {
                 min_starports: None,
                 exclude_permit_locked: true,
                 exclude_rare_commodity: false,
-                max_number_of_factions: None
+                max_number_of_factions: None,
+                exclude_player_faction: false
             }
         )
     }
@@ -431,7 +448,33 @@ mod tests {
                 min_starports: None,
                 exclude_permit_locked: false,
                 exclude_rare_commodity: true,
-                max_number_of_factions: None
+                max_number_of_factions: None,
+                exclude_player_faction: false
+            }
+        )
+    }
+
+    #[test]
+    fn exclude_player_faction() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--exclude-player-faction",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
+            SearchOptions {
+                min_large_docks: None,
+                min_docks: None,
+                min_population: None,
+                max_distance_from_sol: None,
+                reference: None,
+                max_distance_from_reference: None,
+                min_starports: None,
+                exclude_permit_locked: false,
+                exclude_rare_commodity: false,
+                max_number_of_factions: None,
+                exclude_player_faction: true
             }
         )
     }
@@ -469,6 +512,7 @@ mod tests {
                 min_starports: None,
                 exclude_permit_locked: false,
                 exclude_rare_commodity: false,
+                exclude_player_faction: false
             }
         )
     }
@@ -505,7 +549,8 @@ mod tests {
                 min_starports: None,
                 exclude_permit_locked: false,
                 exclude_rare_commodity: false,
-                max_number_of_factions: None
+                max_number_of_factions: None,
+                exclude_player_faction: false
             }
         )
     }
@@ -604,7 +649,8 @@ mod tests {
                 min_starports: None,
                 exclude_permit_locked: false,
                 exclude_rare_commodity: false,
-                max_number_of_factions: None
+                max_number_of_factions: None,
+                exclude_player_faction: false
             }
         )
     }

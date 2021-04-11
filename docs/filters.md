@@ -38,6 +38,19 @@ WISE 0855-0714
 Wolf 359
 ```
 
+## Exclude systems with player faction
+
+Exclude systems with player faction
+
+``` shell,script(name="exclude-player-faction",expected_exit_code=0)
+ed-system-search --exclude-player-faction --max-distance-from-sol 10  "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="exclude-player-faction",stream=stdout)
+Ross 154
+Sol
+```
+
 ## Minimum number of large docks
 
 You can search by number of places you can dock on a large ship
