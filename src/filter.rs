@@ -38,6 +38,11 @@ pub fn filter<'a, T: System + Clone>(
         })
         .filter(|system| {
             search_options
+                .min_starports
+                .map_or(true, |starports| has_min_starports(starports, *system))
+        })
+        .filter(|system| {
+            search_options
                 .min_population
                 .map_or(true, |population| has_min_population(population, *system))
         }))
@@ -61,6 +66,21 @@ fn has_min_large_docks<T: System>(min_large_docks: usize, system: &T) -> bool {
         })
         .count()
         >= min_large_docks
+}
+
+fn has_min_starports<T: System>(min_starports: usize, system: &T) -> bool {
+    system
+        .stations()
+        .iter()
+        .map(|x| x.station_type())
+        .filter(|x| {
+            matches!(
+                *x,
+                "Coriolis Starport" | "Ocellus Starport" | "Orbis Starport"
+            )
+        })
+        .count()
+        >= min_starports
 }
 
 fn has_min_docks<T: System>(min_large_docks: usize, system: &T) -> bool {
@@ -138,6 +158,10 @@ mod tests {
         .cycle();
 
         let stations = iter::repeat(EdsmStation {
+            station_type: String::from("N/A"),
+            distance_to_arrival: Some(296.864_456),
+        })
+        .map(|_x| EdsmStation {
             station_type: String::from(*large_station_types.next().unwrap()),
             distance_to_arrival: Some(296.864_456),
         })
@@ -183,7 +207,8 @@ mod tests {
                     max_distance_from_sol: None,
                     reference: None,
                     max_distance_from_reference: None,
-                    min_population: None
+                    min_population: None,
+                    min_starports: None
                 },
                 &input,
             ),
@@ -206,7 +231,32 @@ mod tests {
                     max_distance_from_sol: None,
                     reference: None,
                     max_distance_from_reference: None,
-                    min_population: None
+                    min_population: None,
+                    min_starports: None
+                },
+                &input,
+            ),
+            &[sol]
+        )
+    }
+
+    #[test]
+    fn systems_without_enough_starports_are_skipped() {
+        let sol = make_system("Sol", 4, 5, None, Option::from(10000_u128));
+        let input = [
+            make_system("Sanos", 3, 5, None, Option::from(10000_u128)),
+            sol.clone(),
+        ];
+        assert_eq!(
+            filter(
+                &SearchOptions {
+                    min_large_docks: None,
+                    min_docks: None,
+                    max_distance_from_sol: None,
+                    reference: None,
+                    max_distance_from_reference: None,
+                    min_population: None,
+                    min_starports: Some(3)
                 },
                 &input,
             ),
@@ -229,7 +279,8 @@ mod tests {
                     max_distance_from_sol: None,
                     reference: None,
                     max_distance_from_reference: None,
-                    min_population: None
+                    min_population: None,
+                    min_starports: None
                 },
                 &input,
             ),
@@ -272,7 +323,8 @@ mod tests {
                     max_distance_from_sol: Some(90.0),
                     reference: None,
                     max_distance_from_reference: None,
-                    min_population: None
+                    min_population: None,
+                    min_starports: None
                 },
                 &input,
             ),
@@ -319,7 +371,8 @@ mod tests {
                         z: f64::from(0),
                     }),
                     max_distance_from_reference: Some(90.0),
-                    min_population: None
+                    min_population: None,
+                    min_starports: None
                 },
                 &input,
             ),
@@ -362,7 +415,8 @@ mod tests {
                     max_distance_from_sol: None,
                     reference: None,
                     max_distance_from_reference: None,
-                    min_population: Option::from(10000_u128)
+                    min_population: Option::from(10000_u128),
+                    min_starports: None
                 },
                 &input,
             ),

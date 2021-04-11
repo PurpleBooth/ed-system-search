@@ -18,7 +18,7 @@ USAGE:
     ed-system-search [OPTIONS] <edsm-path>
 
 ARGS:
-    <edsm-path>    This is the path to th EDSM dump
+    <edsm-path>    This is the path to th EDSM dump in .json.gz format
 
 FLAGS:
     -h, --help       Prints help information
@@ -40,6 +40,9 @@ OPTIONS:
 
         --min-population <COUNT>
             Filter the systems that are have less than the given population
+
+        --min-starports <COUNT>
+            Filter the systems that are have less than the given number of starports
 
         --reference <SYSTEM_NAME>                        A reference system used by other filters
 ```

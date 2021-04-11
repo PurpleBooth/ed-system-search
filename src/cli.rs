@@ -14,7 +14,7 @@ pub fn app() -> App<'static> {
         .about(env!("CARGO_PKG_DESCRIPTION"))
         .arg(
             Arg::new("edsm-path")
-                .about("This is the path to th EDSM dump")
+                .about("This is the path to th EDSM dump in .json.gz format")
                 .required(true),
         )
         .arg(
@@ -23,6 +23,16 @@ pub fn app() -> App<'static> {
                     "Filter the systems that are have less than the given number of docks with room for large ships",
                 )
                 .long("min-docks-large")
+                .takes_value(true)
+                .value_name("COUNT")
+                .required(false),
+        )
+        .arg(
+            Arg::new("min-starports")
+                .about(
+                    "Filter the systems that are have less than the given number of starports"
+                )
+                .long("min-starports")
                 .takes_value(true)
                 .value_name("COUNT")
                 .required(false),
@@ -114,6 +124,10 @@ pub fn parameters_from_matches<T: System>(
             .value_of("max-distance-from-reference")
             .map(|value| f64::from_str(value).map_err(Error::from))
             .map_or(Ok(None), |v| v.map(Some))?,
+        min_starports: matches
+            .value_of("min-starports")
+            .map(|value| usize::from_str(value).map_err(Error::from))
+            .map_or(Ok(None), |v| v.map(Some))?,
     })
 }
 
@@ -144,7 +158,8 @@ mod tests {
                 max_distance_from_sol: None,
                 reference: None,
                 max_distance_from_reference: None,
-                min_population: None
+                min_population: None,
+                min_starports: None
             }
         )
     }
@@ -177,7 +192,8 @@ mod tests {
                 max_distance_from_sol: None,
                 reference: None,
                 max_distance_from_reference: None,
-                min_population: None
+                min_population: None,
+                min_starports: None
             }
         )
     }
@@ -210,7 +226,8 @@ mod tests {
                 max_distance_from_sol: None,
                 reference: None,
                 max_distance_from_reference: None,
-                min_population: Some(10)
+                min_population: Some(10),
+                min_starports: None
             }
         )
     }
@@ -240,6 +257,41 @@ mod tests {
             SearchOptions {
                 min_large_docks: None,
                 min_docks: Some(10),
+                max_distance_from_sol: None,
+                reference: None,
+                max_distance_from_reference: None,
+                min_population: None,
+                min_starports: None
+            }
+        )
+    }
+
+    #[test]
+    fn starports_invalid() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--min-starports=banana",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(&args, &[] as &[stub::System]).is_err(),
+            true
+        )
+    }
+
+    #[test]
+    fn starports_present() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--min-starports=10",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
+            SearchOptions {
+                min_large_docks: None,
+                min_docks: None,
+                min_starports: Some(10),
                 max_distance_from_sol: None,
                 reference: None,
                 max_distance_from_reference: None,
@@ -277,6 +329,7 @@ mod tests {
                 max_distance_from_sol: None,
                 reference: None,
                 max_distance_from_reference: None,
+                min_starports: None
             }
         )
     }
@@ -309,7 +362,8 @@ mod tests {
                 max_distance_from_sol: Some(10.0),
                 reference: None,
                 max_distance_from_reference: None,
-                min_population: None
+                min_population: None,
+                min_starports: None
             }
         )
     }
@@ -401,7 +455,8 @@ mod tests {
                     z: f64::from(0)
                 }),
                 max_distance_from_reference: Some(10_f64),
-                min_population: None
+                min_population: None,
+                min_starports: None
             }
         )
     }

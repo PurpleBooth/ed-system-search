@@ -23,6 +23,29 @@ ed-system-search --min-docks-large banana "$EDSM_GZ_PATH"
 Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
 ```
 
+## Minimum number of starports
+
+Same as large without asteroid stations
+
+``` shell,script(name="min-starports",expected_exit_code=0)
+ed-system-search --min-starports 6 "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="min-starports",stream=stdout)
+Alioth
+Sol
+```
+
+if it's not a number it'll fail
+
+``` shell,script(name="min-starports-err",expected_exit_code=1)
+ed-system-search --min-starports banana "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="min-starports-err",stream=stderr)
+Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
+```
+
 ## Minimum number of docks
 
 You can search by number of places you can dock a ship

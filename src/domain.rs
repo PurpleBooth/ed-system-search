@@ -24,4 +24,5 @@ pub struct SearchOptions {
     pub(crate) reference: Option<Coords>,
     pub(crate) max_distance_from_reference: Option<f64>,
     pub(crate) min_population: Option<u128>,
+    pub(crate) min_starports: Option<usize>,
 }
