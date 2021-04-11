@@ -3,6 +3,8 @@
 *ed-system-search* is a tool to find interesting systems in Elite:
 Dangerous.
 
+It expects the populated systems dump to have been [downloaded from EDSM](https://www.edsm.net/dump/systemsPopulated.json.gz)
+
 ## Usage
 
 ``` shell,script(name="help",expected_exit_code=0)
