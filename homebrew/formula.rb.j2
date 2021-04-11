@@ -5,7 +5,6 @@ class EdSystemSearch < Formula
   sha256 "{{ file_sha }}"
 
   depends_on "rust" => :build
-  depends_on "zsh"
 
   def install
     system "cargo", "install", "--locked", "--root", prefix, "--path", "."
