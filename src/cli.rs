@@ -38,6 +38,16 @@ pub fn app() -> App<'static> {
                 .required(false),
         )
         .arg(
+            Arg::new("min-population")
+                .about(
+                    "Filter the systems that are have less than the given population"
+                )
+                .long("min-population")
+                .takes_value(true)
+                .value_name("COUNT")
+                .required(false),
+        )
+        .arg(
             Arg::new("max-distance-from-sol")
                 .about(
                     "Filter the systems that are further than this distance from sol"
@@ -85,6 +95,10 @@ pub fn parameters_from_matches<T: System>(
             .value_of("max-distance-from-sol")
             .map(|value| f64::from_str(value).map_err(Error::from))
             .map_or(Ok(None), |v| v.map(Some))?,
+        min_population: matches
+            .value_of("min-population")
+            .map(|value| u128::from_str(value).map_err(Error::from))
+            .map_or(Ok(None), |v| v.map(Some))?,
         reference: matches
             .value_of("reference")
             .map(|reference_name| {
@@ -130,6 +144,7 @@ mod tests {
                 max_distance_from_sol: None,
                 reference: None,
                 max_distance_from_reference: None,
+                min_population: None
             }
         )
     }
@@ -162,6 +177,40 @@ mod tests {
                 max_distance_from_sol: None,
                 reference: None,
                 max_distance_from_reference: None,
+                min_population: None
+            }
+        )
+    }
+
+    #[test]
+    fn min_population_invalid() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--min-population=banana",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(&args, &[] as &[stub::System]).is_err(),
+            true
+        )
+    }
+
+    #[test]
+    fn min_population_present() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--min-population=10",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
+            SearchOptions {
+                min_large_docks: None,
+                min_docks: None,
+                max_distance_from_sol: None,
+                reference: None,
+                max_distance_from_reference: None,
+                min_population: Some(10)
             }
         )
     }
@@ -191,6 +240,40 @@ mod tests {
             SearchOptions {
                 min_large_docks: None,
                 min_docks: Some(10),
+                max_distance_from_sol: None,
+                reference: None,
+                max_distance_from_reference: None,
+                min_population: None
+            }
+        )
+    }
+
+    #[test]
+    fn population_invalid() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--min-population=banana",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(&args, &[] as &[stub::System]).is_err(),
+            true
+        )
+    }
+
+    #[test]
+    fn population_present() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--min-population=25000000000",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
+            SearchOptions {
+                min_large_docks: None,
+                min_docks: None,
+                min_population: Some(25_000_000_000),
                 max_distance_from_sol: None,
                 reference: None,
                 max_distance_from_reference: None,
@@ -226,6 +309,7 @@ mod tests {
                 max_distance_from_sol: Some(10.0),
                 reference: None,
                 max_distance_from_reference: None,
+                min_population: None
             }
         )
     }
@@ -249,6 +333,7 @@ mod tests {
                         z: f64::from(0),
                     },
                     stations: vec![],
+                    population: 0
                 }],
             )
             .is_err(),
@@ -275,6 +360,7 @@ mod tests {
                         z: f64::from(0),
                     },
                     stations: vec![],
+                    population: 0
                 }],
             )
             .is_err(),
@@ -301,6 +387,7 @@ mod tests {
                         z: f64::from(0),
                     },
                     stations: vec![],
+                    population: 0
                 }],
             )
             .unwrap(),
@@ -314,6 +401,7 @@ mod tests {
                     z: f64::from(0)
                 }),
                 max_distance_from_reference: Some(10_f64),
+                min_population: None
             }
         )
     }

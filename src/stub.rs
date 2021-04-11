@@ -5,6 +5,7 @@ pub struct System {
     pub(crate) stations: Vec<Station>,
     pub(crate) coords: crate::domain::Coords,
     pub(crate) name: String,
+    pub(crate) population: u128,
 }
 
 impl crate::domain::System for System {
@@ -22,6 +23,10 @@ impl crate::domain::System for System {
 
     fn coordinates(&self) -> crate::domain::Coords {
         self.coords
+    }
+
+    fn population(&self) -> u128 {
+        self.population
     }
 }
 

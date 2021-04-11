@@ -38,5 +38,8 @@ OPTIONS:
             Filter the systems that are have less than the given number of docks with room for large
             ships
 
+        --min-population <COUNT>
+            Filter the systems that are have less than the given population
+
         --reference <SYSTEM_NAME>                        A reference system used by other filters
 ```

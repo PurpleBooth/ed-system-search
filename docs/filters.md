@@ -110,6 +110,31 @@ Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
 ```
 
 
+## Minimum population
+
+You can search by the population of the system
+
+``` shell,script(name="min-population",expected_exit_code=0)
+ed-system-search --min-population 25000000000 "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="min-population",stream=stdout)
+Blatrimpe
+G 203-47
+Lave
+```
+
+if it's not a number it'll fail
+
+``` shell,script(name="min-population-err",expected_exit_code=1)
+ed-system-search --min-population banana "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="min-population-err",stream=stderr)
+Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
+```
+
+
 ## Max distance from sol system
 
 You can search by distance from sol
