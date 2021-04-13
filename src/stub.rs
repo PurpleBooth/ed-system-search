@@ -8,6 +8,7 @@ pub struct System {
     pub(crate) name: String,
     pub(crate) population: u128,
     pub allegiance: String,
+    pub government: String,
 }
 
 impl crate::domain::System for System {
@@ -17,6 +18,10 @@ impl crate::domain::System for System {
 
     fn allegiance(&self) -> String {
         self.allegiance.clone()
+    }
+
+    fn government(&self) -> String {
+        self.government.clone()
     }
 
     fn stations(&self) -> Vec<Box<dyn crate::domain::Station>> {

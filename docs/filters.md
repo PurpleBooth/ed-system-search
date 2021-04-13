@@ -221,6 +221,19 @@ Duamta
 Sol
 ```
 
+## Government
+
+You can search by the population of the system
+
+``` shell,script(name="government",expected_exit_code=0)
+ed-system-search --max-distance-from-sol 10 --government Democracy -- "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="government",stream=stdout)
+Ross 154
+Sol
+```
+
 ## Max number of factions
 
 You can skip systems with more than a number of factions

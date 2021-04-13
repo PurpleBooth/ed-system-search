@@ -42,6 +42,7 @@ pub struct System {
     pub(crate) factions: Option<Vec<Faction>>,
     pub(crate) stations: Option<Vec<Station>>,
     pub(crate) allegiance: Option<String>,
+    pub(crate) government: Option<String>,
 }
 
 impl domain::System for System {
@@ -51,6 +52,10 @@ impl domain::System for System {
 
     fn allegiance(&self) -> String {
         self.allegiance.clone().unwrap_or_else(|| String::from(""))
+    }
+
+    fn government(&self) -> String {
+        self.government.clone().unwrap_or_else(|| String::from(""))
     }
 
     fn stations(&self) -> Vec<Box<dyn domain::Station>> {
@@ -157,7 +162,8 @@ mod tests {
                         distance_to_arrival: Some(296.864_456),
                     }
                 ]),
-                allegiance: Some("Federation".parse().unwrap())
+                allegiance: Some("Federation".parse().unwrap()),
+                government: Some("Corporate".parse().unwrap())
             }]
         )
     }

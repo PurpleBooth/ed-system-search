@@ -30,6 +30,7 @@ pub fn filter<'a, T: System + Clone>(
                 SystemFilter::ExcludeSystems(systems) => !is_excluded_system(systems, *system),
                 SystemFilter::ExcludeSystemsWithPlayerFactions => !has_player_faction(*system),
                 SystemFilter::Allegiance(allegiance) => has_allegiance(allegiance, *system),
+                SystemFilter::Government(government) => has_government(government, *system),
             })
         })
         .cloned()
@@ -44,6 +45,10 @@ fn is_excluded_system<T: System>(excluded_systems: &HashSet<String>, system: &T)
 }
 fn has_allegiance<T: System>(allegiance: &str, system: &T) -> bool {
     system.allegiance().eq(allegiance)
+}
+
+fn has_government<T: System>(government: &str, system: &T) -> bool {
+    system.government().eq(government)
 }
 
 fn has_docks<T: System>(min_large_docks: usize, types: &HashSet<String>, system: &T) -> bool {
@@ -81,8 +86,8 @@ mod tests {
 
     use crate::domain::{
         allegiance, exclude_permit_locked, exclude_player_faction, exclude_rare_commodity,
-        max_distance_from_reference, max_distance_from_sol, max_number_of_factions, min_docks,
-        min_large_docks, min_population, min_starports,
+        government, max_distance_from_reference, max_distance_from_sol, max_number_of_factions,
+        min_docks, min_large_docks, min_population, min_starports,
     };
 
     use crate::filter::filter;
@@ -101,6 +106,7 @@ mod tests {
             factions: vec![],
             stations: vec![],
             allegiance: "".to_string(),
+            government: "".to_string(),
         }
     }
 
@@ -113,6 +119,23 @@ mod tests {
                 z: -52.625_f64,
             },
             allegiance: String::from(allegiance),
+            population: 0,
+            factions: vec![],
+            stations: vec![],
+            government: "".to_string(),
+        }
+    }
+
+    fn make_system_with_government(name: &str, government: &str) -> stub::System {
+        stub::System {
+            name: String::from(name),
+            coords: domain::Coords {
+                x: 73.875_f64,
+                y: -3.5625_f64,
+                z: -52.625_f64,
+            },
+            government: String::from(government),
+            allegiance: "".into(),
             population: 0,
             factions: vec![],
             stations: vec![],
@@ -131,6 +154,7 @@ mod tests {
             factions: vec![],
             stations: vec![],
             allegiance: "".to_string(),
+            government: "".to_string(),
         }
     }
 
@@ -151,6 +175,7 @@ mod tests {
                 })
                 .collect(),
             allegiance: "".to_string(),
+            government: "".to_string(),
         }
     }
 
@@ -169,6 +194,7 @@ mod tests {
                 .collect(),
             stations: vec![],
             allegiance: "".to_string(),
+            government: "".to_string(),
         }
     }
 
@@ -180,6 +206,7 @@ mod tests {
             factions: vec![],
             stations: vec![],
             allegiance: "".to_string(),
+            government: "".to_string(),
         }
     }
 
@@ -355,6 +382,19 @@ mod tests {
         ];
         assert_eq!(
             filter(&[allegiance(String::from("Alliance"))], &input),
+            vec![sol]
+        )
+    }
+
+    #[test]
+    fn systems_government() {
+        let sol = make_system_with_government("Sol", "Democracy");
+        let input = [
+            make_system_with_government("Sanos", "Corporate"),
+            sol.clone(),
+        ];
+        assert_eq!(
+            filter(&[government(String::from("Democracy"))], &input),
             vec![sol]
         )
     }

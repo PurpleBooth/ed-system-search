@@ -32,6 +32,7 @@ FLAGS:
 
 OPTIONS:
         --allegiance <MAJOR_FACTION>                     Filter by allegiance
+        --government <GOVERNMENT_TYPE>                   Filter by government
         --max-distance-from-reference <LIGHT_SECONDS>
             Filter the systems that are further than this distance from the reference
 
