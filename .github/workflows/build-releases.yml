@@ -16,6 +16,7 @@ jobs:
       with:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
         path: |
+          .cache
           ~/.cargo/registry
           ~/.cargo/git
           ~/.cargo/bin
@@ -64,6 +65,7 @@ jobs:
       with:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
         path: |
+          .cache
           ~/.cargo/registry
           ~/.cargo/git
           ~/.cargo/bin
@@ -122,6 +124,7 @@ jobs:
       with:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
         path: |
+          .cache
           ~/.cargo/registry
           ~/.cargo/git
           ~/.cargo/bin
