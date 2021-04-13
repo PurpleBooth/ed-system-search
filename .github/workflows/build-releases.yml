@@ -33,7 +33,7 @@ jobs:
         command: build
     - run: wget -o systemsPopulated.json.gz  https://www.edsm.net/dump/systemsPopulated.json.gz
     - run: |
-        ./target/release/ed-system-search* \
+        ./target/release/ed-system-search \
           --exclude-permit-locked \
           --exclude-player-faction \
           --exclude-rare-commodity \
