@@ -41,6 +41,7 @@ jobs:
           --max-number-of-factions 7 \
           --min-population 1 \
           --min-docks 1 \
+          -- \
           systemsPopulated.json.gz > potential-faction-systems.txt
     - uses: actions/upload-artifact@v2
       name: Store built version
