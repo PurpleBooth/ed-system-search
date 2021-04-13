@@ -41,7 +41,7 @@ impl crate::domain::System for System {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Station {
-    station_type: String,
+    pub(crate) station_type: String,
 }
 
 impl crate::domain::Station for Station {
@@ -52,7 +52,7 @@ impl crate::domain::Station for Station {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Faction {
-    is_player: bool,
+    pub(crate) is_player: bool,
 }
 
 impl crate::domain::Faction for Faction {

@@ -1,6 +1,7 @@
+use std::collections::HashSet;
+
 use crate::distance;
 use crate::domain::{Coords, System, SystemFilter};
-use std::collections::HashSet;
 
 pub fn filter<'a, T: System + Clone>(
     search_options: &'a [SystemFilter],
@@ -73,92 +74,120 @@ fn has_location_within_max_distance_from_reference<T: System>(
 
 #[cfg(test)]
 mod tests {
-    use std::iter;
 
     use crate::domain::{
         exclude_permit_locked, exclude_player_faction, exclude_rare_commodity,
         max_distance_from_reference, max_distance_from_sol, max_number_of_factions, min_docks,
         min_large_docks, min_population, min_starports,
     };
-    use crate::edsm::{
-        ControllingFaction as EdsmControllingFaction, Coords as EdsmCoords, Faction as EdsmFaction,
-        Station as EdsmStation, System as EdsmSystem,
-    };
+
     use crate::filter::filter;
+    use crate::stub::Faction;
+    use crate::{domain, stub};
 
-    fn make_system(
-        name: &str,
-        large_docks: usize,
-        small_docks: usize,
-        coordinates: Option<EdsmCoords>,
-        population: Option<u128>,
-        player_factions: bool,
-        faction_count: usize,
-    ) -> EdsmSystem {
-        let mut large_station_types = [
-            "Asteroid base",
-            "Coriolis Starport",
-            "Ocellus Starport",
-            "Orbis Starport",
-        ]
-        .iter()
-        .cycle();
-
-        let stations = iter::repeat(EdsmStation {
-            station_type: String::from("N/A"),
-            distance_to_arrival: Some(296.864_456),
-        })
-        .map(|_x| EdsmStation {
-            station_type: String::from(*large_station_types.next().unwrap()),
-            distance_to_arrival: Some(296.864_456),
-        })
-        .take(large_docks)
-        .chain(
-            iter::repeat(EdsmStation {
-                station_type: "Planetary Outpost".to_string(),
-                distance_to_arrival: Some(296.864_456),
-            })
-            .take(small_docks),
-        );
-
-        EdsmSystem {
+    fn make_system(name: &str) -> stub::System {
+        stub::System {
             name: String::from(name),
-            coords: coordinates.unwrap_or(EdsmCoords {
+            coords: domain::Coords {
                 x: 73.875_f64,
                 y: -3.5625_f64,
                 z: -52.625_f64,
-            }),
-            population,
-            controlling_faction: EdsmControllingFaction {
-                allegiance: Some("Federation".to_string()),
             },
-            factions: Some(
-                vec![EdsmFaction {
-                    is_player: player_factions,
-                }]
-                .into_iter()
-                .cycle()
-                .take(faction_count)
+            population: 0,
+            factions: vec![],
+            stations: vec![],
+        }
+    }
+
+    fn make_system_with_population(name: &str, population: u128) -> stub::System {
+        stub::System {
+            name: String::from(name),
+            coords: domain::Coords {
+                x: 73.875_f64,
+                y: -3.5625_f64,
+                z: -52.625_f64,
+            },
+            population,
+            factions: vec![],
+            stations: vec![],
+        }
+    }
+
+    fn make_stub_system_with_docks(name: &str, docks: &[&str]) -> stub::System {
+        stub::System {
+            name: String::from(name),
+            coords: domain::Coords {
+                x: 73.875_f64,
+                y: -3.5625_f64,
+                z: -52.625_f64,
+            },
+            population: 1,
+            factions: vec![],
+            stations: docks
+                .iter()
+                .map(|x| stub::Station {
+                    station_type: String::from(*x),
+                })
                 .collect(),
-            ),
-            stations: Some(stations.collect()),
+        }
+    }
+
+    fn make_system_with_factions(name: &str, factions: &[bool]) -> stub::System {
+        stub::System {
+            name: String::from(name),
+            coords: domain::Coords {
+                x: 73.875_f64,
+                y: -3.5625_f64,
+                z: -52.625_f64,
+            },
+            population: 1,
+            factions: factions
+                .iter()
+                .map(|player| Faction { is_player: *player })
+                .collect(),
+            stations: vec![],
+        }
+    }
+
+    fn make_system_at_coords(name: &str, coords: domain::Coords) -> stub::System {
+        stub::System {
+            name: String::from(name),
+            coords,
+            population: 1,
+            factions: vec![],
+            stations: vec![],
         }
     }
 
     #[test]
     fn no_options_returns_everything() {
-        let input = [
-            make_system("Sanos", 5, 5, None, Option::from(10000_u128), true, 5),
-            make_system("Sol", 5, 5, None, Option::from(10000_u128), true, 5),
-        ];
-        assert_eq!(filter(&[], &input,), input)
+        let input = [make_system("Sanos"), make_system("Sol")];
+        assert_eq!(filter(&[], &input), input)
     }
 
     #[test]
     fn systems_without_enough_large_docks_are_skipped() {
-        let sol = make_system("Sol", 5, 5, None, Option::from(10000_u128), true, 5);
+        let sol = make_stub_system_with_docks(
+            "Sol",
+            &[
+                "Asteroid base",
+                "Coriolis Starport",
+                "Ocellus Starport",
+                "Orbis Starport",
+                "Planetary Outpost",
+                "Ocellus Starport",
+            ],
+        );
         let input = [
-            make_system("Sanos", 2, 5, None, Option::from(10000_u128), true, 5),
+            make_stub_system_with_docks(
+                "Sanos",
+                &[
+                    "Asteroid base",
+                    "Ocellus Starport",
+                    "Orbis Starport",
+                    "Planetary Outpost",
+                ],
+            ),
             sol.clone(),
         ];
         assert_eq!(filter(&[min_large_docks(5)], &input,), &[sol])
@@ -166,9 +195,15 @@ mod tests {
 
     #[test]
     fn systems_without_enough_starports_are_skipped() {
-        let sol = make_system("Sol", 4, 5, None, Option::from(10000_u128), true, 5);
+        let sol = make_stub_system_with_docks(
+            "Sol",
+            &["Coriolis Starport", "Ocellus Starport", "Orbis Starport"],
+        );
         let input = [
-            make_system("Sanos", 3, 5, None, Option::from(10000_u128), true, 5),
+            make_stub_system_with_docks(
+                "Sanos",
+                &["Asteroid base", "Orbis Starport", "Planetary Outpost"],
+            ),
             sol.clone(),
         ];
         assert_eq!(filter(&[min_starports(3)], &input,), &[sol])
@@ -176,144 +211,71 @@ mod tests {
 
     #[test]
     fn systems_without_enough_docks_are_skipped() {
-        let sol = make_system("Sol", 5, 5, None, Option::from(10000_u128), true, 5);
+        let sol = make_stub_system_with_docks("Sol", &["Asteroid base", "Planetary Outpost"]);
         let input = [
-            make_system("Sanos", 2, 5, None, Option::from(10000_u128), true, 5),
+            make_stub_system_with_docks("Sanos", &["Planetary Outpost"]),
             sol.clone(),
         ];
-        assert_eq!(filter(&[min_docks(9)], &input,), &[sol])
+        assert_eq!(filter(&[min_docks(2)], &input,), &[sol])
     }
 
     #[test]
     fn systems_too_far_from_sol_skipped() {
-        let sol = make_system(
+        let sol = make_system_at_coords(
             "Sol",
-            5,
-            5,
-            Option::from(EdsmCoords {
+            domain::Coords {
                 x: f64::from(0),
                 y: f64::from(0),
                 z: f64::from(0),
-            }),
-            Option::from(10000_u128),
-            true,
-            5,
+            },
         );
+
         let input = [
-            make_system(
+            make_system_at_coords(
                 "Sanos",
-                2,
-                5,
-                Option::from(EdsmCoords {
+                domain::Coords {
                     x: 73.875_f64,
                     y: -3.5625_f64,
                     z: -52.625_f64,
-                }),
-                Option::from(10000_u128),
-                true,
-                5,
+                },
             ),
             sol.clone(),
         ];
-        assert_eq!(filter(&[max_distance_from_sol(90.0)], &input,), vec![sol])
+        assert_eq!(filter(&[max_distance_from_sol(90.0)], &input), vec![sol])
     }
 
     #[test]
     fn permit_locked_systems_skipped() {
-        let sanos = make_system(
-            "Sanos",
-            2,
-            5,
-            Option::from(EdsmCoords {
-                x: 73.875_f64,
-                y: -3.5625_f64,
-                z: -52.625_f64,
-            }),
-            Option::from(10000_u128),
-            true,
-            5,
-        );
-        let input = [
-            sanos.clone(),
-            make_system(
-                "Sol",
-                5,
-                5,
-                Option::from(EdsmCoords {
-                    x: f64::from(0),
-                    y: f64::from(0),
-                    z: f64::from(0),
-                }),
-                Option::from(10000_u128),
-                true,
-                5,
-            ),
-        ];
-        assert_eq!(filter(&[exclude_permit_locked()], &input,), vec![sanos])
+        let sanos = make_system("Sanos");
+        let input = [sanos.clone(), make_system("Sol")];
+        assert_eq!(filter(&[exclude_permit_locked()], &input), vec![sanos])
     }
 
     #[test]
     fn rare_commodity_systems_skipped() {
-        let sanos = make_system(
-            "Sanos",
-            2,
-            5,
-            Option::from(EdsmCoords {
-                x: 73.875_f64,
-                y: -3.5625_f64,
-                z: -52.625_f64,
-            }),
-            Option::from(10000_u128),
-            true,
-            5,
-        );
-        let input = [
-            sanos.clone(),
-            make_system(
-                "Alpha Centauri",
-                5,
-                5,
-                Option::from(EdsmCoords {
-                    x: f64::from(0),
-                    y: f64::from(0),
-                    z: f64::from(0),
-                }),
-                Option::from(10000_u128),
-                true,
-                5,
-            ),
-        ];
-        assert_eq!(filter(&[exclude_rare_commodity()], &input,), vec![sanos])
+        let sanos = make_system("Sanos");
+        let input = [sanos.clone(), make_system("Alpha Centauri")];
+        assert_eq!(filter(&[exclude_rare_commodity()], &input), vec![sanos])
     }
 
     #[test]
     fn systems_too_far_from_reference_skipped() {
-        let sol = make_system(
+        let sol = make_system_at_coords(
             "Sol",
-            5,
-            5,
-            Option::from(EdsmCoords {
+            domain::Coords {
                 x: f64::from(0),
                 y: f64::from(0),
                 z: f64::from(0),
-            }),
-            Option::from(10000_u128),
-            true,
-            5,
+            },
         );
         let input = [
-            make_system(
+            make_system_at_coords(
                 "Sanos",
-                2,
-                5,
-                Option::from(EdsmCoords {
+                domain::Coords {
                     x: 73.875_f64,
                     y: -3.5625_f64,
                     z: -52.625_f64,
-                }),
-                Option::from(10000_u128),
-                true,
-                5,
+                },
             ),
             sol.clone(),
         ];
@@ -325,7 +287,7 @@ mod tests {
                         y: f64::from(0),
                         z: f64::from(0),
                     },
-                    90.0
+                    90.0,
                 )],
                 &input,
             ),
@@ -335,103 +297,28 @@ mod tests {
 
     #[test]
     fn systems_with_too_low_population_are_ignored() {
-        let sol = make_system(
-            "Sol",
-            5,
-            5,
-            Option::from(EdsmCoords {
-                x: f64::from(0),
-                y: f64::from(0),
-                z: f64::from(0),
-            }),
-            Option::from(10000_u128),
-            true,
-            5,
-        );
-        let input = [
-            make_system(
-                "Sanos",
-                2,
-                5,
-                Option::from(EdsmCoords {
-                    x: 73.875_f64,
-                    y: -3.5625_f64,
-                    z: -52.625_f64,
-                }),
-                Option::from(9999_u128),
-                true,
-                5,
-            ),
-            sol.clone(),
-        ];
-        assert_eq!(filter(&[min_population(10000_u128)], &input,), vec![sol])
+        let sol = make_system_with_population("Sol", 10000_u128);
+        let input = [make_system_with_population("Sanos", 9999_u128), sol.clone()];
+        assert_eq!(filter(&[min_population(10000_u128)], &input), vec![sol])
     }
 
     #[test]
     fn systems_with_too_many_factions_are_ignored_ignored() {
-        let sol = make_system(
-            "Sol",
-            5,
-            5,
-            Option::from(EdsmCoords {
-                x: f64::from(0),
-                y: f64::from(0),
-                z: f64::from(0),
-            }),
-            Option::from(10000_u128),
-            false,
-            5,
-        );
+        let sol = make_system_with_factions("Sol", &[false, false, false]);
         let input = [
-            make_system(
-                "Sanos",
-                2,
-                5,
-                Option::from(EdsmCoords {
-                    x: 73.875_f64,
-                    y: -3.5625_f64,
-                    z: -52.625_f64,
-                }),
-                Option::from(9999_u128),
-                true,
-                10,
-            ),
+            make_system_with_factions("Sanos", &[false, false, false, false]),
             sol.clone(),
         ];
-        assert_eq!(filter(&[max_number_of_factions(7)], &input,), vec![sol])
+        assert_eq!(filter(&[max_number_of_factions(3)], &input), vec![sol])
     }
 
     #[test]
     fn systems_with_player_factions_are_ignored_ignored() {
-        let sol = make_system(
-            "Sol",
-            5,
-            5,
-            Option::from(EdsmCoords {
-                x: f64::from(0),
-                y: f64::from(0),
-                z: f64::from(0),
-            }),
-            Option::from(10000_u128),
-            false,
-            5,
-        );
+        let sol = make_system_with_factions("Sol", &[false, false]);
         let input = [
-            make_system(
-                "Sanos",
-                2,
-                5,
-                Option::from(EdsmCoords {
-                    x: 73.875_f64,
-                    y: -3.5625_f64,
-                    z: -52.625_f64,
-                }),
-                Option::from(9999_u128),
-                true,
-                10,
-            ),
+            make_system_with_factions("Sanos", &[false, true]),
             sol.clone(),
         ];
-        assert_eq!(filter(&[exclude_player_faction()], &input,), vec![sol])
+        assert_eq!(filter(&[exclude_player_faction()], &input), vec![sol])
     }
 }
