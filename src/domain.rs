@@ -9,6 +9,7 @@ pub struct Coords {
 
 pub trait System {
     fn name(&self) -> &str;
+    fn allegiance(&self) -> String;
     fn stations(&self) -> Vec<Box<dyn Station>>;
     fn factions(&self) -> Vec<Box<dyn Faction>>;
     fn coordinates(&self) -> Coords;
@@ -25,12 +26,17 @@ pub trait Faction {
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum SystemFilter {
+    Allegiance(String),
     MaximumDistanceFrom(Coords, f64),
     MinimumStationCount(HashSet<String>, usize),
     MaximumFactionCount(usize),
     MinimumPopulation(u128),
     ExcludeSystems(HashSet<String>),
     ExcludeSystemsWithPlayerFactions,
+}
+
+pub(crate) fn allegiance(allegiance: String) -> SystemFilter {
+    SystemFilter::Allegiance(allegiance)
 }
 
 pub(crate) fn min_large_docks(count: usize) -> SystemFilter {

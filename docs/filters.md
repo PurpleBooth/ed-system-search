@@ -208,6 +208,18 @@ ed-system-search --min-population banana "$EDSM_GZ_PATH"
 Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
 ```
 
+## Allegiance
+
+You can search by the population of the system
+
+``` shell,script(name="allegiance",expected_exit_code=0)
+ed-system-search --max-distance-from-sol 10 --allegiance Federation -- "$EDSM_GZ_PATH"
+```
+
+``` text,verify(script_name="allegiance",stream=stdout)
+Duamta
+Sol
+```
 
 ## Max number of factions
 

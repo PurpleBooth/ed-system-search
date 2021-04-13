@@ -31,6 +31,7 @@ FLAGS:
     -V, --version                   Prints version information
 
 OPTIONS:
+        --allegiance <MAJOR_FACTION>                     Filter by allegiance
         --max-distance-from-reference <LIGHT_SECONDS>
             Filter the systems that are further than this distance from the reference
 

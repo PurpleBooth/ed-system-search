@@ -7,11 +7,16 @@ pub struct System {
     pub(crate) coords: crate::domain::Coords,
     pub(crate) name: String,
     pub(crate) population: u128,
+    pub allegiance: String,
 }
 
 impl crate::domain::System for System {
     fn name(&self) -> &str {
         &self.name
+    }
+
+    fn allegiance(&self) -> String {
+        self.allegiance.clone()
     }
 
     fn stations(&self) -> Vec<Box<dyn crate::domain::Station>> {

@@ -6,7 +6,7 @@ use thiserror::Error as ThisError;
 
 use crate::domain;
 use crate::domain::{
-    exclude_permit_locked, exclude_player_faction, exclude_rare_commodity,
+    allegiance, exclude_permit_locked, exclude_player_faction, exclude_rare_commodity,
     max_distance_from_reference, max_distance_from_sol, max_number_of_factions, min_docks,
     min_large_docks, min_population, min_starports, System,
 };
@@ -31,6 +31,16 @@ pub fn app() -> App<'static> {
                 .long("min-docks-large")
                 .takes_value(true)
                 .value_name("COUNT")
+                .required(false),
+        )
+        .arg(
+            Arg::new("allegiance")
+                .about(
+                    "Filter by allegiance",
+                )
+                .long("allegiance")
+                .takes_value(true)
+                .value_name("MAJOR_FACTION")
                 .required(false),
         )
         .arg(
@@ -149,6 +159,9 @@ pub fn parameters_from_matches<T: System>(
 
     return Ok(vec![
         matches
+            .value_of("allegiance")
+            .map(|value| allegiance(String::from(value))),
+        matches
             .value_of("min-docks-large")
             .map(|value| usize::from_str(value).map_err(Error::from))
             .map_or(Ok(None), |v| v.map(|x| Some(min_large_docks(x))))?,
@@ -214,7 +227,7 @@ pub enum Error {
 mod tests {
     use crate::cli::{app, parameters_from_matches};
     use crate::domain::{
-        max_distance_from_reference, max_distance_from_sol, min_docks, min_large_docks,
+        allegiance, max_distance_from_reference, max_distance_from_sol, min_docks, min_large_docks,
         min_population, min_starports, Coords,
     };
     use crate::{domain, stub};
@@ -359,6 +372,19 @@ mod tests {
     }
 
     #[test]
+    fn allegiance_matches() {
+        let args = app().get_matches_from(vec![
+            "ed-system-search",
+            "--allegiance=Alliance",
+            "some-edsm-dump.json.gz",
+        ]);
+        assert_eq!(
+            parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
+            vec![allegiance("Alliance".to_string())]
+        )
+    }
+
+    #[test]
     fn exclude_permit_locked() {
         let args = app().get_matches_from(vec![
             "ed-system-search",
@@ -470,6 +496,7 @@ mod tests {
                     stations: vec![],
                     population: 0,
                     factions: vec![],
+                    allegiance: "".to_string()
                 }],
             )
             .is_err(),
@@ -498,6 +525,7 @@ mod tests {
                     stations: vec![],
                     population: 0,
                     factions: vec![],
+                    allegiance: "".to_string()
                 }],
             )
             .is_err(),
@@ -526,6 +554,7 @@ mod tests {
                     stations: vec![],
                     population: 0,
                     factions: vec![],
+                    allegiance: "".to_string()
                 }],
             )
             .unwrap(),

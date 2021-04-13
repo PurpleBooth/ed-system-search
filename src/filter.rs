@@ -29,6 +29,7 @@ pub fn filter<'a, T: System + Clone>(
                 }
                 SystemFilter::ExcludeSystems(systems) => !is_excluded_system(systems, *system),
                 SystemFilter::ExcludeSystemsWithPlayerFactions => !has_player_faction(*system),
+                SystemFilter::Allegiance(allegiance) => has_allegiance(allegiance, *system),
             })
         })
         .cloned()
@@ -40,6 +41,9 @@ pub fn filter<'a, T: System + Clone>(
 
 fn is_excluded_system<T: System>(excluded_systems: &HashSet<String>, system: &T) -> bool {
     excluded_systems.contains(system.name())
+}
+fn has_allegiance<T: System>(allegiance: &str, system: &T) -> bool {
+    system.allegiance().eq(allegiance)
 }
 
 fn has_docks<T: System>(min_large_docks: usize, types: &HashSet<String>, system: &T) -> bool {
@@ -76,7 +80,7 @@ fn has_location_within_max_distance_from_reference<T: System>(
 mod tests {
 
     use crate::domain::{
-        exclude_permit_locked, exclude_player_faction, exclude_rare_commodity,
+        allegiance, exclude_permit_locked, exclude_player_faction, exclude_rare_commodity,
         max_distance_from_reference, max_distance_from_sol, max_number_of_factions, min_docks,
         min_large_docks, min_population, min_starports,
     };
@@ -96,6 +100,22 @@ mod tests {
             population: 0,
             factions: vec![],
             stations: vec![],
+            allegiance: "".to_string(),
+        }
+    }
+
+    fn make_system_with_allegiance(name: &str, allegiance: &str) -> stub::System {
+        stub::System {
+            name: String::from(name),
+            coords: domain::Coords {
+                x: 73.875_f64,
+                y: -3.5625_f64,
+                z: -52.625_f64,
+            },
+            allegiance: String::from(allegiance),
+            population: 0,
+            factions: vec![],
+            stations: vec![],
         }
     }
 
@@ -110,6 +130,7 @@ mod tests {
             population,
             factions: vec![],
             stations: vec![],
+            allegiance: "".to_string(),
         }
     }
 
@@ -129,6 +150,7 @@ mod tests {
                     station_type: String::from(*x),
                 })
                 .collect(),
+            allegiance: "".to_string(),
         }
     }
 
@@ -146,6 +168,7 @@ mod tests {
                 .map(|player| Faction { is_player: *player })
                 .collect(),
             stations: vec![],
+            allegiance: "".to_string(),
         }
     }
 
@@ -156,6 +179,7 @@ mod tests {
             population: 1,
             factions: vec![],
             stations: vec![],
+            allegiance: "".to_string(),
         }
     }
 
@@ -320,5 +344,18 @@ mod tests {
             sol.clone(),
         ];
         assert_eq!(filter(&[exclude_player_faction()], &input), vec![sol])
+    }
+
+    #[test]
+    fn systems_allegiance() {
+        let sol = make_system_with_allegiance("Sol", "Alliance");
+        let input = [
+            make_system_with_allegiance("Sanos", "Federation"),
+            sol.clone(),
+        ];
+        assert_eq!(
+            filter(&[allegiance(String::from("Alliance"))], &input),
+            vec![sol]
+        )
     }
 }
