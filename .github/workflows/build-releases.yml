@@ -4,6 +4,49 @@ on:
     tags-ignore:
     - versio-prev
 jobs:
+  generate-list:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2.3.4
+      name: Checkout the repository
+      with:
+        lfs: true
+    - uses: actions/cache@v2.1.4
+      name: Cache cargo dependencies
+      with:
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          ~/.cargo/bin
+          target
+    - uses: actions-rs/toolchain@v1
+      name: Install rust toolchain
+      with:
+        default: true
+        profile: minimal
+        toolchain: stable
+    - uses: actions-rs/cargo@v1
+      name: Build release version
+      with:
+        args: --release --locked
+        command: build
+    - run: wget -o systemsPopulated.json.gz  https://www.edsm.net/dump/systemsPopulated.json.gz
+    - run: |
+        ./target/release/ed-system-search* \
+          --exclude-permit-locked \
+          --exclude-player-faction \
+          --exclude-rare-commodity \
+          --max-distance-from-sol 500 \
+          --max-number-of-factions 7 \
+          --min-population 1 \
+          --min-docks 1 \
+          systemsPopulated.json.gz > potential-faction-systems.txt
+    - uses: actions/upload-artifact@v2
+      name: Store built version
+      with:
+        name: potential-faction-systems
+        path: potential-faction-systems.txt
   build:
     runs-on: ${{ matrix.os }}
     steps:
@@ -64,6 +107,7 @@ jobs:
           install: ''
   release:
     needs:
+    - generate-list
     - build
     runs-on: ubuntu-latest
     steps:
@@ -154,3 +198,12 @@ jobs:
           steps.get_repository_name.outputs.REPOSITORY_NAME }}.exe
         asset_name: ${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-x86_64-pc-windows-msvc.exe
         asset_content_type: application/octet-stream
+    - uses: actions/upload-release-asset@v1.0.2
+      name: Upload potential faction list
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./potential-faction-systems/potential-faction-systems.txt
+        asset_name: potential-faction-systems.txt
+        asset_content_type: plain/text
