@@ -168,4 +168,4 @@ jobs:
         body: ${{ steps.changelog.outputs.body }}
         name: Release ${{ steps.get_version.outputs.VERSION }}
         tag: ${{ steps.get_version.outputs.VERSION }}
-        assets: ./potential-faction-systems/*,./bins/*
+        artifacts: ./potential-faction-systems/*,./bins/*
