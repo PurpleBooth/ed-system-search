@@ -87,7 +87,7 @@ jobs:
       name: Store built binary version
       with:
         name: bins
-        path: ${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}${{ matrix.target
+        path: ${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{ matrix.target
           }}${{ matrix.suffix }}
     strategy:
       matrix:
