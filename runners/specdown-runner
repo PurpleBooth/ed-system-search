@@ -2,38 +2,38 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
 function safe_specdown() {
-    if [ -f "$1" ]; then
-        MARKDOWN_PATH="$(
-            cd "$(dirname "$1")"
-            pwd -P
-        )/$(basename "$1")"
+	if [ -f "$1" ]; then
+		MARKDOWN_PATH="$(
+			cd "$(dirname "$1")"
+			pwd -P
+		)/$(basename "$1")"
 
-        EDSM_GZ_PATH="$SCRIPT_DIR/../.cache/systemsPopulated.json.gz"
-        if ! [ -f "$EDSM_GZ_PATH" ] ; then
-          mkdir -p "$(dirname "$EDSM_GZ_PATH")"
-          curl -Lo "$EDSM_GZ_PATH" "https://www.edsm.net/dump/systemsPopulated.json.gz"
-        fi
+		EDSM_GZ_PATH="$SCRIPT_DIR/../.cache/systemsPopulated.json.gz"
+		if ! [ -f "$EDSM_GZ_PATH" ]; then
+			mkdir -p "$(dirname "$EDSM_GZ_PATH")"
+			curl -Lo "$EDSM_GZ_PATH" "https://www.edsm.net/dump/systemsPopulated.json.gz"
+		fi
 
-        (
-            REPOSITORY_DIR="$PWD"
-            TEMPORARY_DIR="$(mktemp -d)"
-            cd "$TEMPORARY_DIR"
-            mkdir "$TEMPORARY_DIR/repo"
+		(
+			REPOSITORY_DIR="$PWD"
+			TEMPORARY_DIR="$(mktemp -d)"
+			cd "$TEMPORARY_DIR"
+			mkdir "$TEMPORARY_DIR/repo"
 
-            cd "$TEMPORARY_DIR/repo"
-            export PATH="$REPOSITORY_DIR/target/release/:$PATH"
-            export EDSM_GZ_PATH
-            specdown run "$MARKDOWN_PATH"
-        )
-    else
-        echo "$1 is not valid"
-        exit 1
-    fi
+			cd "$TEMPORARY_DIR/repo"
+			export PATH="$REPOSITORY_DIR/target/release/:$PATH"
+			export EDSM_GZ_PATH
+			specdown run "$MARKDOWN_PATH"
+		)
+	else
+		echo "$1 is not valid"
+		exit 1
+	fi
 }
 
 for ARG in "${@:1}"; do
-    safe_specdown "$ARG"
+	safe_specdown "$ARG"
 done

@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+set -xeuo pipefail
+
+COMBINATIONS=(
+	"Alliance-Anarchy"
+	"Alliance-Communism"
+	"Alliance-Confederacy"
+	"Alliance-Cooperative"
+	"Alliance-Corporate"
+	"Alliance-Democracy"
+	"Alliance-Dictatorship"
+	"Alliance-Feudal"
+	"Alliance-Patronage"
+	"Alliance-Prison"
+	"Alliance-Prison colony"
+	"Alliance-Theocracy"
+	"Empire-Anarchy"
+	"Empire-Communism"
+	"Empire-Confederacy"
+	"Empire-Cooperative"
+	"Empire-Corporate"
+	"Empire-Democracy"
+	"Empire-Dictatorship"
+	"Empire-Feudal"
+	"Empire-Patronage"
+	"Empire-Prison"
+	"Empire-Prison colony"
+	"Empire-Theocracy"
+	"Federation-Anarchy"
+	"Federation-Communism"
+	"Federation-Confederacy"
+	"Federation-Cooperative"
+	"Federation-Corporate"
+	"Federation-Democracy"
+	"Federation-Dictatorship"
+	"Federation-Feudal"
+	"Federation-Patronage"
+	"Federation-Prison"
+	"Federation-Prison colony"
+	"Federation-Theocracy"
+	"Independent-Anarchy"
+	"Independent-Communism"
+	"Independent-Confederacy"
+	"Independent-Cooperative"
+	"Independent-Corporate"
+	"Independent-Democracy"
+	"Independent-Dictatorship"
+	"Independent-Feudal"
+	"Independent-Patronage"
+	"Independent-Prison"
+	"Independent-Prison colony"
+	"Independent-Theocracy"
+)
+
+for COMBINATION in "${COMBINATIONS[@]}"; do
+	ALLEGIANCE=$(echo "$COMBINATION" | cut -f1 -d-)
+	GOVERNMENT=$(echo "$COMBINATION" | cut -f2 -d-)
+
+	./target/release/ed-system-search \
+		--exclude-permit-locked \
+		--exclude-player-faction \
+		--exclude-rare-commodity \
+		--max-distance-from-sol 500 \
+		--max-number-of-factions 7 \
+		--min-population 1 \
+		--min-docks 1 \
+		--allegiance "$ALLEGIANCE" \
+		--government "$GOVERNMENT" \
+		-- \
+		systemsPopulated.json.gz >"potential-faction-systems-$ALLEGIANCE-$GOVERNMENT.txt" &
+done
+
+./target/release/ed-system-search \
+	--exclude-permit-locked \
+	--exclude-player-faction \
+	--exclude-rare-commodity \
+	--max-distance-from-sol 500 \
+	--max-number-of-factions 7 \
+	--min-population 1 \
+	--min-docks 1 \
+	-- \
+	systemsPopulated.json.gz >potential-faction-systems.txt
+
+wait < <(jobs -p)
