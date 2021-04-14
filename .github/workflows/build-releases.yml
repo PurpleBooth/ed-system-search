@@ -76,7 +76,7 @@ jobs:
       run: echo ::set-output name=REPOSITORY_NAME::$(echo "$GITHUB_REPOSITORY" | awk
         -F / '{print $2}' | sed -e "s/:refs//")
       shell: bash
-    - name: Calculate repository name
+    - name: Move binary to upload location
       env:
         TARGET: ${{ matrix.target }}
         EXTENSION: ${{ matrix.suffix }}
@@ -164,6 +164,7 @@ jobs:
       uses: ncipollo/release-action@v1.8.3
       with:
         allowUpdates: true
+        token: ${{ secrets.COMMITTER_TOKEN }}
         body: ${{ steps.changelog.outputs.body }}
         name: Release ${{ steps.get_version.outputs.VERSION }}
         tag: ${{ steps.get_version.outputs.VERSION }}
