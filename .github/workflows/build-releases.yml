@@ -38,247 +38,7 @@ jobs:
       name: Store built version
       with:
         name: potential-faction-systems
-        path: potential-faction-systems.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Alliance-Anarchy.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Alliance-Communism.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Alliance-Confederacy.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Alliance-Cooperative.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Alliance-Corporate.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Alliance-Democracy.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Alliance-Dictatorship.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Alliance-Feudal.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Alliance-Patronage.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Alliance-Prison.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Alliance-Prison colony.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Alliance-Theocracy.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Empire-Anarchy.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Empire-Communism.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Empire-Confederacy.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Empire-Cooperative.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Empire-Corporate.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Empire-Democracy.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Empire-Dictatorship.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Empire-Feudal.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Empire-Patronage.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Empire-Prison.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Empire-Prison colony.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Empire-Theocracy.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Federation-Anarchy.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Federation-Communism.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Federation-Confederacy.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Federation-Cooperative.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Federation-Corporate.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Federation-Democracy.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Federation-Dictatorship.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Federation-Feudal.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Federation-Patronage.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Federation-Prison.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Federation-Prison colony.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Federation-Theocracy.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Independent-Anarchy.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Independent-Communism.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Independent-Confederacy.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Independent-Cooperative.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Independent-Corporate.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Independent-Democracy.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Independent-Dictatorship.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Independent-Feudal.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Independent-Patronage.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Independent-Prison.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Independent-Prison colony.txt
-    - uses: actions/upload-artifact@v2
-      name: Store built version
-      with:
-        name: potential-faction-systems
-        path: potential-faction-systems-Independent-Theocracy.txt
+        path: potential-faction-systems*.txt
   build:
     runs-on: ${{ matrix.os }}
     steps:
@@ -316,12 +76,18 @@ jobs:
       run: echo ::set-output name=REPOSITORY_NAME::$(echo "$GITHUB_REPOSITORY" | awk
         -F / '{print $2}' | sed -e "s/:refs//")
       shell: bash
+    - name: Calculate repository name
+      env:
+        TARGET: ${{ matrix.target }}
+        EXTENSION: ${{ matrix.suffix }}
+        REPOSITORY_NAME: ${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}
+      run: mv ./target/release/$REPOSITORY_NAME$EXTENSION ./$REPOSITORY_NAME-$TARGET$EXTENSION
+      shell: bash
     - uses: actions/upload-artifact@v2
-      name: Store built version
+      name: Store built binary version
       with:
-        name: ${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{ matrix.target
-          }}
-        path: ./target/release/${{ steps.get_repository_name.outputs.REPOSITORY_NAME
+        name: bins
+        path: ${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}${{ matrix.target
           }}${{ matrix.suffix }}
     strategy:
       matrix:
@@ -360,7 +126,7 @@ jobs:
           ~/.cargo/bin
           target
     - uses: actions/download-artifact@v2
-      name: Retrieve built binaries
+      name: Retrieve assets
     - uses: actions-rs/toolchain@v1
       name: Install rust toolchain
       with:
@@ -395,46 +161,10 @@ jobs:
     - env:
         GITHUB_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
       id: create_release
-      uses: actions/create-release@v1.1.4
+      uses: ncipollo/release-action@v1.8.3
       with:
-        draft: false
-        prerelease: false
+        allowUpdates: true
         body: ${{ steps.changelog.outputs.body }}
-        release_name: Release ${{ steps.get_version.outputs.VERSION }}
-        tag_name: ${{ steps.get_version.outputs.VERSION }}
-    - uses: actions/upload-release-asset@v1.0.2
-      name: Upload x86_64-unknown-linux-gnu binaries to release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-x86_64-unknown-linux-gnu/${{
-          steps.get_repository_name.outputs.REPOSITORY_NAME }}
-        asset_name: ${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-x86_64-unknown-linux-gnu
-        asset_content_type: application/octet-stream
-    - uses: actions/upload-release-asset@v1.0.2
-      name: Upload x86_64-apple-darwin binaries to release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-x86_64-apple-darwin/${{
-          steps.get_repository_name.outputs.REPOSITORY_NAME }}
-        asset_name: ${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-x86_64-apple-darwin
-        asset_content_type: application/octet-stream
-    - uses: actions/upload-release-asset@v1.0.2
-      name: Upload x86_64-pc-windows-msvc binaries to release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-x86_64-pc-windows-msvc/${{
-          steps.get_repository_name.outputs.REPOSITORY_NAME }}.exe
-        asset_name: ${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-x86_64-pc-windows-msvc.exe
-        asset_content_type: application/octet-stream
-    - uses: alexellis/upload-assets@0.3.0
-      name: Upload potential faction list
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        asset_paths: '["./potential-faction-systems/*"]'
+        name: Release ${{ steps.get_version.outputs.VERSION }}
+        tag: ${{ steps.get_version.outputs.VERSION }}
+        assets: ./potential-faction-systems/*,./bins/*
