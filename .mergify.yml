@@ -4,9 +4,9 @@ pull_request_rules:
   - status-success=security-audit
   - status-success=check
   - status-success=version
-  - status-success=test (macos-latest, echo nothing-to-install)
-  - status-success=test (ubuntu-latest, sudo apt-get install -y libxcb-shape0-dev
-    libxcb-xfixes0-dev)
+  - status-success=test (macos-latest)
+  - status-success=test (windows-latest)
+  - status-success=test (ubuntu-latest)
   - status-success=lints
   - base=main
   - -author~=^dependabot(|-preview)\[bot\]$
@@ -15,29 +15,14 @@ pull_request_rules:
     request_reviews:
       users:
       - PurpleBooth
-- name: automatic rebase for releases
-  conditions:
-  - status-success=security-audit
-  - status-success=check
-  - status-success=version
-  - status-success=test (macos-latest, echo nothing-to-install)
-  - status-success=test (ubuntu-latest, sudo apt-get install -y libxcb-shape0-dev
-    libxcb-xfixes0-dev)
-  - status-success=lints
-  - base=main
-  - label=releases
-  actions:
-    merge:
-      strict: smart+fasttrack
-      method: rebase
 - name: automatic rebase for dependencies
   conditions:
   - status-success=security-audit
   - status-success=check
   - status-success=version
-  - status-success=test (macos-latest, echo nothing-to-install)
-  - status-success=test (ubuntu-latest, sudo apt-get install -y libxcb-shape0-dev
-    libxcb-xfixes0-dev)
+  - status-success=test (macos-latest)
+  - status-success=test (windows-latest)
+  - status-success=test (ubuntu-latest)
   - status-success=lints
   - base=main
   - author~=^dependabot(|-preview)\[bot\]$
