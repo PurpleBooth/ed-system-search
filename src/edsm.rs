@@ -15,7 +15,7 @@ pub struct Faction {
 #[derive(Deserialize, Debug, PartialEq, Clone)]
 pub struct Station {
     #[serde(rename = "type")]
-    pub(crate) station_type: String,
+    pub(crate) station_type: Option<String>,
     #[serde(rename = "distanceToArrival")]
     pub(crate) distance_to_arrival: Option<f64>,
 }
@@ -96,8 +96,8 @@ impl domain::System for System {
 }
 
 impl domain::Station for Station {
-    fn station_type(&self) -> &str {
-        self.station_type.as_str()
+    fn station_type(&self) -> Option<String> {
+        self.station_type.clone()
     }
 }
 
@@ -154,11 +154,11 @@ mod tests {
                 ]),
                 stations: Some(vec![
                     Station {
-                        station_type: String::from("Fleet Carrier"),
+                        station_type: Some(String::from("Fleet Carrier")),
                         distance_to_arrival: Some(296.807_847),
                     },
                     Station {
-                        station_type: "Orbis Starport".to_string(),
+                        station_type: Some("Orbis Starport".to_string()),
                         distance_to_arrival: Some(296.864_456),
                     }
                 ]),

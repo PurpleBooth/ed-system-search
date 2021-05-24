@@ -56,7 +56,13 @@ fn has_docks<T: System>(min_large_docks: usize, types: &HashSet<String>, system:
         .stations()
         .iter()
         .map(|x| x.station_type())
-        .filter(|x| types.contains(*x))
+        .filter(|x| {
+            matches!(
+                x.clone()
+                    .filter(|station_type| types.contains(station_type)),
+                Some(_)
+            )
+        })
         .count()
         >= min_large_docks
 }
@@ -171,7 +177,7 @@ mod tests {
             stations: docks
                 .iter()
                 .map(|x| stub::Station {
-                    station_type: String::from(*x),
+                    station_type: Some(String::from(*x)),
                 })
                 .collect(),
             allegiance: "".to_string(),

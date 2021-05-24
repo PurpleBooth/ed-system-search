@@ -18,7 +18,7 @@ pub trait System {
 }
 
 pub trait Station {
-    fn station_type(&self) -> &str;
+    fn station_type(&self) -> Option<String>;
 }
 
 pub trait Faction {

@@ -51,12 +51,12 @@ impl crate::domain::System for System {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Station {
-    pub(crate) station_type: String,
+    pub(crate) station_type: Option<String>,
 }
 
 impl crate::domain::Station for Station {
-    fn station_type(&self) -> &str {
-        self.station_type.as_str()
+    fn station_type(&self) -> Option<String> {
+        self.station_type.clone()
     }
 }
 
