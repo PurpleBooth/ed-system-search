@@ -19,7 +19,6 @@ WISE 0855-0714
 Wolf 359
 ```
 
-
 ## Exclude permit locked systems
 
 Exclude permit locked systems
@@ -117,15 +116,22 @@ Amenta
 Aranbarahun
 Arevakimos
 Arikara
+Asetsi
 BD+65 1846
+BD-00 3426
 BD-19 3629A
 Balmung
+Beimech
 Beker
 Beta Circini
+Bilonesses
 Candecama
 Charunder
 Chujohimba
+Fincien
+G 35-15
 Gebel
+Gilgamesh
 Gliese 867.1
 Gliese 868
 Gliese 900.1
@@ -137,10 +143,15 @@ HIP 22281
 HIP 38129
 HIP 41308
 HIP 78983
+HIP 82851
 HIP 9316
+HIP 98621
 HR 1475
+HR 8526
 Inara
 Jang Di
+Juipedun
+Jupaloku
 Kakmburra
 Kalb
 Kamocan
@@ -148,27 +159,42 @@ Kotilekui
 LHS 1914
 LHS 2310
 LHS 274
+LHS 6309
+LP 302-22
 LTT 11244
+LTT 11478
 Laksak
 Lalande 10797
+Lalande 22701
 Laukese
+Laur
+Mazu
+Morixa
 Mula Wendes
 Mullag
 NLTT 9447
 Nahuatl
 Nyx
 Oduduro
+Ongkampan
 Peraesii
 Pini
 Plutarch
 Puelchana
+Ra
+Ratemere
 Rind
+Rishatkwali
+Ross 409
 Scirth
 Sol
 T'iensei
+Telin
 Tinigua
+Tiolce
 Uchaluroja
 Urcia
+Wangal
 Yab Yum
 Zeta Microscopii
 ```
@@ -182,7 +208,6 @@ ed-system-search --min-docks banana "$EDSM_GZ_PATH"
 ``` text,verify(script_name="min-docks-err",stream=stderr)
 Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
 ```
-
 
 ## Minimum population
 
@@ -264,7 +289,6 @@ ed-system-search --max-number-of-factions banana "$EDSM_GZ_PATH"
 Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
 ```
 
-
 ## Max distance from sol system
 
 You can search by distance from sol
@@ -294,7 +318,6 @@ ed-system-search --max-distance-from-sol banana "$EDSM_GZ_PATH"
 ``` text,verify(script_name="max-distance-from-sol-err",stream=stderr)
 Error: Cli(InvalidFloat(ParseFloatError { kind: Invalid }))
 ```
-
 
 ## Max distance from reference system
 
