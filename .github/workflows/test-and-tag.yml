@@ -157,6 +157,7 @@ jobs:
         command: clippy
         args: --all-targets --all-features -- -D warnings -Dclippy::all -D clippy::pedantic
           -D clippy::cargo -A clippy::multiple-crate-versions
+    - uses: gaurav-nelson/github-action-markdown-link-check@1.0.12
   merge-and-push:
     if: github.ref == 'refs/heads/main'
     needs:

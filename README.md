@@ -68,3 +68,7 @@ brew
 ``` shell,skip()
 brew install PurpleBooth/repo/ed-system-search
 ```
+
+## More Examples
+
+You can see more examples in [Filters guide](./docs/filters.md)
