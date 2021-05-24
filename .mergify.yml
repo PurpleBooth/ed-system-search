@@ -8,6 +8,8 @@ pull_request_rules:
   - status-success=test (windows-latest)
   - status-success=test (ubuntu-latest)
   - status-success=lints
+  - status-success=specdown (ubuntu-latest, https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-...
+  - status-success=specdown (macos-latest, https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-x...
   - base=main
   - -author~=^dependabot(|-preview)\[bot\]$
   - -author=PurpleBooth
@@ -17,6 +19,8 @@ pull_request_rules:
       - PurpleBooth
 - name: automatic rebase for dependencies
   conditions:
+  - status-success=specdown (ubuntu-latest, https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-...
+  - status-success=specdown (macos-latest, https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-x...
   - status-success=security-audit
   - status-success=check
   - status-success=version
