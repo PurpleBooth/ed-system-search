@@ -12,8 +12,7 @@ mod tests {
 
     #[test]
     fn coordinate_distance() {
-        assert_eq!(
-            true,
+        assert!(
             (distance(
                 &Coords {
                     x: -11.46875,

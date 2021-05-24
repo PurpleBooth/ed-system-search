@@ -261,10 +261,7 @@ mod tests {
             "--min-docks-large=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert_eq!(
-            parameters_from_matches(&args, &[] as &[stub::System]).is_err(),
-            true
-        )
+        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err())
     }
 
     #[test]
@@ -287,10 +284,7 @@ mod tests {
             "--min-population=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert_eq!(
-            parameters_from_matches(&args, &[] as &[stub::System]).is_err(),
-            true
-        )
+        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),)
     }
 
     #[test]
@@ -313,10 +307,7 @@ mod tests {
             "--min-docks=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert_eq!(
-            parameters_from_matches(&args, &[] as &[stub::System]).is_err(),
-            true
-        )
+        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),)
     }
 
     #[test]
@@ -339,10 +330,7 @@ mod tests {
             "--min-starports=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert_eq!(
-            parameters_from_matches(&args, &[] as &[stub::System]).is_err(),
-            true
-        )
+        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),)
     }
 
     #[test]
@@ -365,10 +353,7 @@ mod tests {
             "--min-population=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert_eq!(
-            parameters_from_matches(&args, &[] as &[stub::System]).is_err(),
-            true
-        )
+        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),)
     }
 
     #[test]
@@ -456,10 +441,7 @@ mod tests {
             "--max-number-of-factions=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert_eq!(
-            parameters_from_matches(&args, &[] as &[stub::System]).is_err(),
-            true
-        )
+        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),)
     }
 
     #[test]
@@ -482,10 +464,7 @@ mod tests {
             "--max-distance-from-sol=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert_eq!(
-            parameters_from_matches(&args, &[] as &[stub::System]).is_err(),
-            true
-        )
+        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),)
     }
 
     #[test]
@@ -509,26 +488,23 @@ mod tests {
             "--reference=Sol",
             "some-edsm-dump.json.gz",
         ]);
-        assert_eq!(
-            parameters_from_matches(
-                &args,
-                &[stub::System {
-                    name: "Sol".into(),
-                    coords: Coords {
-                        x: f64::from(0),
-                        y: f64::from(0),
-                        z: f64::from(0),
-                    },
-                    stations: vec![],
-                    population: 0,
-                    factions: vec![],
-                    allegiance: "".to_string(),
-                    government: "".to_string()
-                }],
-            )
-            .is_err(),
-            true
+        assert!(parameters_from_matches(
+            &args,
+            &[stub::System {
+                name: "Sol".into(),
+                coords: Coords {
+                    x: f64::from(0),
+                    y: f64::from(0),
+                    z: f64::from(0),
+                },
+                stations: vec![],
+                population: 0,
+                factions: vec![],
+                allegiance: "".to_string(),
+                government: "".to_string()
+            }],
         )
+        .is_err(),)
     }
 
     #[test]
@@ -539,30 +515,27 @@ mod tests {
             "--reference=Missing",
             "some-edsm-dump.json.gz",
         ]);
-        assert_eq!(
-            parameters_from_matches(
-                &args,
-                &[stub::System {
-                    name: "Sol".into(),
-                    coords: Coords {
-                        x: f64::from(0),
-                        y: f64::from(0),
-                        z: f64::from(0),
-                    },
-                    stations: vec![],
-                    population: 0,
-                    factions: vec![],
-                    allegiance: "".to_string(),
-                    government: "".to_string()
-                }],
-            )
-            .is_err(),
-            true
+        assert!(parameters_from_matches(
+            &args,
+            &[stub::System {
+                name: "Sol".into(),
+                coords: Coords {
+                    x: f64::from(0),
+                    y: f64::from(0),
+                    z: f64::from(0),
+                },
+                stations: vec![],
+                population: 0,
+                factions: vec![],
+                allegiance: "".to_string(),
+                government: "".to_string()
+            }],
         )
+        .is_err(),)
     }
 
     #[test]
-    fn both_reference_and_disance_present() {
+    fn both_reference_and_distance_present() {
         let args = app().get_matches_from(vec![
             "ed-system-search",
             "--max-distance-from-reference=10",
