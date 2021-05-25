@@ -211,7 +211,7 @@ jobs:
       if: steps.current_version.outputs.current_version != steps.previous_version.outputs.previous_version
       id: version_bump
 
-  cargo:
+  cargo-publish:
     needs:
     - release
     runs-on: ubuntu-latest
