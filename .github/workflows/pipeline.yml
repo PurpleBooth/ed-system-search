@@ -170,8 +170,7 @@ jobs:
     - cargo-audit
     - cargo-check
     outputs:
-      version_bump: ${{ steps.current_version.outputs.current_version != steps.previous_version.outputs.previous_version
-        }}
+      version_bump: ${{ steps.version_bump.outputs.version_bump }}
       current_version: ${{ steps.current_version.outputs.current_version }}
       previous_version: ${{ steps.previous_version.outputs.previous_version }}
     runs-on: ubuntu-latest
@@ -208,12 +207,15 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
         GITHUB_USER: ${{ github.actor }}
+    - run: echo ::set-output "name=version_bump::true"
+      if: steps.current_version.outputs.current_version != steps.previous_version.outputs.previous_version
+      id: version_bump
 
   cargo:
     needs:
     - release
     runs-on: ubuntu-latest
-    if: ${{ needs.release.outputs.version_bump }}
+    if: needs.release.outputs.version_bump
     steps:
     - uses: actions/checkout@v2.3.4
       name: Checkout the repository
@@ -228,7 +230,7 @@ jobs:
 
 
   generate-system-list:
-    if: ${{ needs.release.outputs.version_bump }}
+    if: needs.release.outputs.version_bump
     needs:
     - release
     runs-on: ubuntu-latest
@@ -267,7 +269,7 @@ jobs:
         path: potential-faction-systems*.txt
 
   build-release:
-    if: ${{ needs.release.outputs.version_bump }}
+    if: needs.release.outputs.version_bump
     runs-on: ${{ matrix.os }}
     needs:
     - release
@@ -336,7 +338,7 @@ jobs:
           install: ''
 
   upload-release:
-    if: ${{ needs.release.outputs.version_bump }}
+    if: needs.release.outputs.version_bump
     needs:
     - generate-system-list
     - build-release
@@ -407,7 +409,7 @@ jobs:
   generate-formula:
     needs:
     - release
-    if: ${{ needs.release.outputs.version_bump }}
+    if: needs.release.outputs.version_bump
     name: Generate Homebrew Formula
     runs-on: ubuntu-latest
     steps:
