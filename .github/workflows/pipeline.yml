@@ -196,10 +196,8 @@ jobs:
     - name: Generate release
       if: ${{ contains(steps.get_versio_plan.outputs.BUMP, ' -> ') }}
       run: |
-        cargo login "$CARGO_TOKEN"
-        cargo publish
+        versio release
       env:
-        CARGO_TOKEN: ${{ secrets.CARGO_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
         GITHUB_USER: ${{ github.actor }}
         RUST_LOG: versio=trace
@@ -222,7 +220,8 @@ jobs:
         ref: v${{ needs.release.outputs.current_version }}
     - name: Generate release
       run: |
-        versio release
+        cargo login "$CARGO_TOKEN"
+        cargo publish
       env:
         GITHUB_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
         GITHUB_USER: ${{ github.actor }}
