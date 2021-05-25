@@ -117,15 +117,19 @@ Aranbarahun
 Arevakimos
 Arikara
 Asetsi
+BD+49 1280
 BD+65 1846
 BD-00 3426
+BD-12 4699
 BD-19 3629A
 Balmung
 Beimech
 Beker
+Belliya
 Beta Circini
 Bilonesses
 Candecama
+Catucandit
 Charunder
 Chujohimba
 Fincien
@@ -142,12 +146,14 @@ HIP 21778
 HIP 22281
 HIP 38129
 HIP 41308
+HIP 74067
 HIP 78983
 HIP 82851
 HIP 9316
 HIP 98621
 HR 1475
 HR 8526
+Iman Caber
 Inara
 Jang Di
 Juipedun
@@ -182,11 +188,13 @@ Pini
 Plutarch
 Puelchana
 Ra
+Rabay
 Ratemere
 Rind
 Rishatkwali
 Ross 409
 Scirth
+Sietae
 Sol
 T'iensei
 Telin
