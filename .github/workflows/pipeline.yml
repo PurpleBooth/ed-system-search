@@ -223,10 +223,7 @@ jobs:
         cargo login "$CARGO_TOKEN"
         cargo publish
       env:
-        GITHUB_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
-        GITHUB_USER: ${{ github.actor }}
-        RUST_LOG: versio=trace
-        RUST_BACKTRACE: 1
+        CARGO_TOKEN: ${{ secrets.CARGO_TOKEN }}
 
 
   generate-system-list:
