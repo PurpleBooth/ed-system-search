@@ -228,6 +228,8 @@ jobs:
 
   generate-system-list:
     if: ${{ needs.release.outputs.version_bump }}
+    needs:
+      - release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
@@ -265,6 +267,8 @@ jobs:
   build-release:
     if: ${{ needs.release.outputs.version_bump }}
     runs-on: ${{ matrix.os }}
+    needs:
+      - release
     steps:
       - run: ${{ matrix.install }}
         env:
@@ -333,6 +337,7 @@ jobs:
     needs:
       - generate-system-list
       - build-release
+      - release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
