@@ -13,7 +13,7 @@ trim_trailing_whitespace = true
 insert_final_newline = true
 
 # Tab indentation (no size specified)
-[Makefile]
+[{Makefile,generate-all-combinations,specdown-runner}]
 indent_style = tab
 
 # Matches the exact files either package.json or .travis.yml
