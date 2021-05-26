@@ -101,110 +101,11 @@ Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
 You can search by number of places you can dock a ship
 
 ``` shell,script(name="min-docks",expected_exit_code=0)
-ed-system-search --min-docks 15 "$EDSM_GZ_PATH"
+ed-system-search --min-docks 15 --max-distance-from-sol 10 "$EDSM_GZ_PATH"
 ```
 
 ``` text,verify(script_name="min-docks",stream=stdout)
-62 Ursae Majoris
-Aditjargl
-Adityan
-Albarib
-Alchita
-Alpha Tucanae
-Aluriates
-Amenta
-Aranbarahun
-Arevakimos
-Arikara
-Asetsi
-BD+49 1280
-BD+65 1846
-BD-00 3426
-BD-12 4699
-BD-19 3629A
-Balmung
-Beimech
-Beker
-Belliya
-Beta Circini
-Bilonesses
-Candecama
-Catucandit
-Charunder
-Chujohimba
-Fincien
-G 35-15
-Gebel
-Gilgamesh
-Gliese 867.1
-Gliese 868
-Gliese 900.1
-Grebegus
-HIP 115929
-HIP 21559
-HIP 21778
-HIP 22281
-HIP 38129
-HIP 41308
-HIP 74067
-HIP 78983
-HIP 82851
-HIP 9316
-HIP 98621
-HR 1475
-HR 8526
-Iman Caber
-Inara
-Jang Di
-Juipedun
-Jupaloku
-Kakmburra
-Kalb
-Kamocan
-Kotilekui
-LHS 1914
-LHS 2310
-LHS 274
-LHS 6309
-LP 302-22
-LTT 11244
-LTT 11478
-Laksak
-Lalande 10797
-Lalande 22701
-Laukese
-Laur
-Mazu
-Morixa
-Mula Wendes
-Mullag
-NLTT 9447
-Nahuatl
-Nyx
-Oduduro
-Ongkampan
-Peraesii
-Pini
-Plutarch
-Puelchana
-Ra
-Rabay
-Ratemere
-Rind
-Rishatkwali
-Ross 409
-Scirth
-Sietae
-Sol
-T'iensei
-Telin
-Tinigua
-Tiolce
-Uchaluroja
-Urcia
-Wangal
-Yab Yum
-Zeta Microscopii
+Sol    
 ```
 
 if it's not a number it'll fail
