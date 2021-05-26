@@ -105,7 +105,7 @@ ed-system-search --min-docks 15 --max-distance-from-sol 10 "$EDSM_GZ_PATH"
 ```
 
 ``` text,verify(script_name="min-docks",stream=stdout)
-Sol    
+Sol
 ```
 
 if it's not a number it'll fail
