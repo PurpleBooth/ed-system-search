@@ -80,7 +80,7 @@ dependencies = [
 
 [[package]]
 name = "ed-system-search"
-version = "1.0.7"
+version = "1.0.8"
 dependencies = [
  "clap",
  "flate2",
