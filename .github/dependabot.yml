@@ -1,7 +1,6 @@
 version: 2
 updates:
 - package-ecosystem: github-actions
-  versioning-strategy: increase
   directory: /
   schedule:
     interval: daily
@@ -13,6 +12,5 @@ updates:
   schedule:
     interval: daily
   open-pull-requests-limit: 10
-  versioning-strategy: increase-if-necessary
   commit-message:
     prefix: fix
