@@ -16,7 +16,7 @@ jobs:
           specdown: https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-x86_64-unknown-linux-gnu
     steps:
     - uses: actions/checkout@v2.3.4
-    - uses: actions/cache@v2.1.5
+    - uses: actions/cache@v2.1.6
       with:
         path: |
           .cache
@@ -45,7 +45,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2.3.4
       name: Checkout the repository
-    - uses: actions/cache@v2.1.5
+    - uses: actions/cache@v2.1.6
       name: Cache cargo
       with:
         path: |
@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2.3.4
-    - uses: actions/cache@v2.1.5
+    - uses: actions/cache@v2.1.6
       with:
         path: |
           .cache
@@ -113,7 +113,7 @@ jobs:
         - os: windows-latest
     steps:
     - uses: actions/checkout@v2.3.4
-    - uses: actions/cache@v2.1.5
+    - uses: actions/cache@v2.1.6
       with:
         path: |
           .cache
@@ -135,7 +135,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2.3.4
-    - uses: actions/cache@v2.1.5
+    - uses: actions/cache@v2.1.6
       with:
         path: |
           .cache
@@ -239,7 +239,7 @@ jobs:
       name: Checkout the repository
       with:
         ref: v${{ needs.release.outputs.current_version }}
-    - uses: actions/cache@v2.1.5
+    - uses: actions/cache@v2.1.6
       name: Cache cargo dependencies
       with:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
@@ -282,7 +282,7 @@ jobs:
       name: Checkout the repository
       with:
         ref: v${{ needs.release.outputs.current_version }}
-    - uses: actions/cache@v2.1.5
+    - uses: actions/cache@v2.1.6
       name: Cache cargo dependencies
       with:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
@@ -351,7 +351,7 @@ jobs:
         lfs: true
         fetch-depth: 0
         ref: v${{ needs.release.outputs.current_version }}
-    - uses: actions/cache@v2.1.5
+    - uses: actions/cache@v2.1.6
       name: Cache cargo dependencies
       with:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
