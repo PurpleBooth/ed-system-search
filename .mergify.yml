@@ -1,6 +1,8 @@
-pull_request_rules:
-- name: request review on external contributor
+queue_rules:
+- name: default
   conditions:
+  - status-success=specdown (ubuntu-latest, https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-...
+  - status-success=specdown (macos-latest, https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-x...
   - status-success=cargo-audit
   - status-success=cargo-check
   - status-success=versio-plan
@@ -8,15 +10,16 @@ pull_request_rules:
   - status-success=cargo-test (windows-latest)
   - status-success=cargo-test (ubuntu-latest)
   - status-success=lint
-  - status-success=specdown (ubuntu-latest, https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-...
-  - status-success=specdown (macos-latest, https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-x...
-  - base=main
-  - -author~=^dependabot(|-preview)\[bot\]$
+
+pull_request_rules:
+- name: request review on external contributor
+  conditions:
   - -author=PurpleBooth
   actions:
     request_reviews:
       users:
       - PurpleBooth
+
 - name: automatic rebase for dependencies
   conditions:
   - status-success=specdown (ubuntu-latest, https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-...
@@ -31,7 +34,7 @@ pull_request_rules:
   - base=main
   - author~=^dependabot(|-preview)\[bot\]$
   actions:
-    merge:
-      strict: smart+fasttrack
+    queue:
       method: rebase
-
+      rebase_fallback: merge
+      name: default
