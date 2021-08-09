@@ -251,7 +251,7 @@ mod tests {
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![]
-        )
+        );
     }
 
     #[test]
@@ -261,7 +261,7 @@ mod tests {
             "--min-docks-large=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err())
+        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err());
     }
 
     #[test]
@@ -274,7 +274,7 @@ mod tests {
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![min_large_docks(10)]
-        )
+        );
     }
 
     #[test]
@@ -284,7 +284,7 @@ mod tests {
             "--min-population=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),)
+        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),);
     }
 
     #[test]
@@ -297,7 +297,7 @@ mod tests {
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![min_population(10)]
-        )
+        );
     }
 
     #[test]
@@ -307,7 +307,7 @@ mod tests {
             "--min-docks=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),)
+        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),);
     }
 
     #[test]
@@ -320,7 +320,7 @@ mod tests {
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![min_docks(10)]
-        )
+        );
     }
 
     #[test]
@@ -330,7 +330,7 @@ mod tests {
             "--min-starports=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),)
+        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),);
     }
 
     #[test]
@@ -343,7 +343,7 @@ mod tests {
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![min_starports(10)]
-        )
+        );
     }
 
     #[test]
@@ -353,7 +353,7 @@ mod tests {
             "--min-population=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),)
+        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),);
     }
 
     #[test]
@@ -366,7 +366,7 @@ mod tests {
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![min_population(25_000_000_000)]
-        )
+        );
     }
 
     #[test]
@@ -379,7 +379,7 @@ mod tests {
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![allegiance("Alliance".to_string())]
-        )
+        );
     }
 
     #[test]
@@ -392,7 +392,7 @@ mod tests {
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![government("Democracy".to_string())]
-        )
+        );
     }
 
     #[test]
@@ -405,7 +405,7 @@ mod tests {
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![domain::exclude_permit_locked()]
-        )
+        );
     }
 
     #[test]
@@ -418,7 +418,7 @@ mod tests {
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![domain::exclude_rare_commodity()]
-        )
+        );
     }
 
     #[test]
@@ -431,7 +431,7 @@ mod tests {
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![domain::exclude_player_faction()]
-        )
+        );
     }
 
     #[test]
@@ -441,7 +441,7 @@ mod tests {
             "--max-number-of-factions=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),)
+        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),);
     }
 
     #[test]
@@ -454,7 +454,7 @@ mod tests {
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![domain::max_number_of_factions(10)]
-        )
+        );
     }
 
     #[test]
@@ -464,7 +464,7 @@ mod tests {
             "--max-distance-from-sol=banana",
             "some-edsm-dump.json.gz",
         ]);
-        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),)
+        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),);
     }
 
     #[test]
@@ -477,7 +477,7 @@ mod tests {
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![max_distance_from_sol(10.0)]
-        )
+        );
     }
 
     #[test]
@@ -504,7 +504,7 @@ mod tests {
                 government: "".to_string()
             }],
         )
-        .is_err(),)
+        .is_err(),);
     }
 
     #[test]
@@ -531,7 +531,7 @@ mod tests {
                 government: "".to_string()
             }],
         )
-        .is_err(),)
+        .is_err(),);
     }
 
     #[test]
@@ -568,6 +568,6 @@ mod tests {
                 },
                 10.0
             )]
-        )
+        );
     }
 }

@@ -219,7 +219,7 @@ mod tests {
     #[test]
     fn no_options_returns_everything() {
         let input = [make_system("Sanos"), make_system("Sol")];
-        assert_eq!(filter(&[], &input), input)
+        assert_eq!(filter(&[], &input), input);
     }
 
     #[test]
@@ -247,7 +247,7 @@ mod tests {
             ),
             sol.clone(),
         ];
-        assert_eq!(filter(&[min_large_docks(5)], &input,), &[sol])
+        assert_eq!(filter(&[min_large_docks(5)], &input,), &[sol]);
     }
 
     #[test]
@@ -263,7 +263,7 @@ mod tests {
             ),
             sol.clone(),
         ];
-        assert_eq!(filter(&[min_starports(3)], &input,), &[sol])
+        assert_eq!(filter(&[min_starports(3)], &input,), &[sol]);
     }
 
     #[test]
@@ -273,7 +273,7 @@ mod tests {
             make_stub_system_with_docks("Sanos", &["Planetary Outpost"]),
             sol.clone(),
         ];
-        assert_eq!(filter(&[min_docks(2)], &input,), &[sol])
+        assert_eq!(filter(&[min_docks(2)], &input,), &[sol]);
     }
 
     #[test]
@@ -298,21 +298,21 @@ mod tests {
             ),
             sol.clone(),
         ];
-        assert_eq!(filter(&[max_distance_from_sol(90.0)], &input), vec![sol])
+        assert_eq!(filter(&[max_distance_from_sol(90.0)], &input), vec![sol]);
     }
 
     #[test]
     fn permit_locked_systems_skipped() {
         let sanos = make_system("Sanos");
         let input = [sanos.clone(), make_system("Sol")];
-        assert_eq!(filter(&[exclude_permit_locked()], &input), vec![sanos])
+        assert_eq!(filter(&[exclude_permit_locked()], &input), vec![sanos]);
     }
 
     #[test]
     fn rare_commodity_systems_skipped() {
         let sanos = make_system("Sanos");
         let input = [sanos.clone(), make_system("Alpha Centauri")];
-        assert_eq!(filter(&[exclude_rare_commodity()], &input), vec![sanos])
+        assert_eq!(filter(&[exclude_rare_commodity()], &input), vec![sanos]);
     }
 
     #[test]
@@ -349,14 +349,14 @@ mod tests {
                 &input,
             ),
             vec![sol]
-        )
+        );
     }
 
     #[test]
     fn systems_with_too_low_population_are_ignored() {
         let sol = make_system_with_population("Sol", 10000_u128);
         let input = [make_system_with_population("Sanos", 9999_u128), sol.clone()];
-        assert_eq!(filter(&[min_population(10000_u128)], &input), vec![sol])
+        assert_eq!(filter(&[min_population(10000_u128)], &input), vec![sol]);
     }
 
     #[test]
@@ -366,7 +366,7 @@ mod tests {
             make_system_with_factions("Sanos", &[false, false, false, false]),
             sol.clone(),
         ];
-        assert_eq!(filter(&[max_number_of_factions(3)], &input), vec![sol])
+        assert_eq!(filter(&[max_number_of_factions(3)], &input), vec![sol]);
     }
 
     #[test]
@@ -376,7 +376,7 @@ mod tests {
             make_system_with_factions("Sanos", &[false, true]),
             sol.clone(),
         ];
-        assert_eq!(filter(&[exclude_player_faction()], &input), vec![sol])
+        assert_eq!(filter(&[exclude_player_faction()], &input), vec![sol]);
     }
 
     #[test]
@@ -389,7 +389,7 @@ mod tests {
         assert_eq!(
             filter(&[allegiance(String::from("Alliance"))], &input),
             vec![sol]
-        )
+        );
     }
 
     #[test]
@@ -402,6 +402,6 @@ mod tests {
         assert_eq!(
             filter(&[government(String::from("Democracy"))], &input),
             vec![sol]
-        )
+        );
     }
 }

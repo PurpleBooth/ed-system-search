@@ -31,7 +31,7 @@ fn main() -> Result<(), Error> {
 
 fn display_systems<T: System>(systems: Vec<T>) {
     for system in systems {
-        println!("{}", system.name())
+        println!("{}", system.name());
     }
 }
 

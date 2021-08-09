@@ -126,7 +126,7 @@ mod tests {
 
     #[test]
     fn invalid_json() {
-        assert!(parse("This is not valid json".as_bytes()).is_err())
+        assert!(parse("This is not valid json".as_bytes()).is_err());
     }
 
     #[test]
@@ -165,7 +165,7 @@ mod tests {
                 allegiance: Some("Federation".parse().unwrap()),
                 government: Some("Corporate".parse().unwrap())
             }]
-        )
+        );
     }
 
     #[test]
@@ -181,6 +181,6 @@ mod tests {
                 .unwrap()
                 .name(),
             "Sanos"
-        )
+        );
     }
 }
