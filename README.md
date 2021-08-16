@@ -13,7 +13,7 @@ ed-system-search --help
 ```
 
 ``` text,verify(script_name="help",stream=stdout)
-ed-system-search 1.0.13
+ed-system-search 1.0.14
 
 Billie Thompson <billie@billiecodes.com>
 
