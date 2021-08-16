@@ -14,7 +14,9 @@ ed-system-search --help
 
 ``` text,verify(script_name="help",stream=stdout)
 ed-system-search 1.0.13
+
 Billie Thompson <billie@billiecodes.com>
+
 Find interesting systems in the EDSM data dump
 
 USAGE:
@@ -27,12 +29,16 @@ FLAGS:
         --exclude-permit-locked     Exclude permit locked systems
         --exclude-player-faction    Exclude systems that contain a player faction
         --exclude-rare-commodity    Exclude systems that sell rare commodities
-    -h, --help                      Prints help information
-    -V, --version                   Prints version information
+    -h, --help                      Print help information
+    -V, --version                   Print version information
 
 OPTIONS:
-        --allegiance <MAJOR_FACTION>                     Filter by allegiance
-        --government <GOVERNMENT_TYPE>                   Filter by government
+        --allegiance <MAJOR_FACTION>
+            Filter by allegiance
+
+        --government <GOVERNMENT_TYPE>
+            Filter by government
+
         --max-distance-from-reference <LIGHT_SECONDS>
             Filter the systems that are further than this distance from the reference
 
@@ -55,15 +61,15 @@ OPTIONS:
         --min-starports <COUNT>
             Filter the systems that are have less than the given number of starports
 
-        --reference <SYSTEM_NAME>                        A reference system used by other filters
+        --reference <SYSTEM_NAME>
+            A reference system used by other filters
 ```
 
 ## Installing
 
 See the [releases
 page](https://github.com/PurpleBooth/ed-system-search/releases/latest)
-we build for windows, linux and mac (all x86\_64), alternatively use
-brew
+we build for windows, linux and mac (all x86_64), alternatively use brew
 
 ``` shell,skip()
 brew install PurpleBooth/repo/ed-system-search
