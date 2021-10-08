@@ -23,7 +23,7 @@ jobs:
     needs:
     - lint-markdown
     - commit-checks
-    - cargo-test
+    - rust-checks
     - specdown
     outputs:
       version_bump: ${{ steps.version_bump.outputs.version_bump }}
