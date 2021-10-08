@@ -162,7 +162,7 @@ pub fn parameters_from_matches<T: System>(
             systems
                 .iter()
                 .find(|system| system.name() == reference_name)
-                .map(|x| x.coordinates())
+                .map(domain::System::coordinates)
                 .ok_or_else(|| Error::SystemNotFound(reference_name.into()))
         })
         .map_or(Ok(None), |v| v.map(Some))?;
