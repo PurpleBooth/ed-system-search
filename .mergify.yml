@@ -1,15 +1,10 @@
 queue_rules:
 - name: default
   conditions:
-  - status-success=specdown (ubuntu-latest, https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-...
-  - status-success=specdown (macos-latest, https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-x...
-  - status-success=cargo-audit
-  - status-success=cargo-check
-  - status-success=versio-plan
-  - status-success=cargo-test (macos-latest)
-  - status-success=cargo-test (windows-latest)
-  - status-success=cargo-test (ubuntu-latest)
-  - status-success=lint
+  - check-success~=^commit-checks /
+  - check-success~=^specdown /
+  - check-success~=^lint-markdown /
+  - check-success~=^rust-checks /
 
 pull_request_rules:
 - name: request review on external contributor
@@ -22,15 +17,10 @@ pull_request_rules:
 
 - name: automatic rebase for dependencies
   conditions:
-  - status-success=specdown (ubuntu-latest, https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-...
-  - status-success=specdown (macos-latest, https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-x...
-  - status-success=cargo-audit
-  - status-success=cargo-check
-  - status-success=versio-plan
-  - status-success=cargo-test (macos-latest)
-  - status-success=cargo-test (windows-latest)
-  - status-success=cargo-test (ubuntu-latest)
-  - status-success=lint
+  - check-success~=^commit-checks /
+  - check-success~=^specdown /
+  - check-success~=^lint-markdown /
+  - check-success~=^rust-checks /
   - base=main
   - author~=^dependabot(|-preview)\[bot\]$
   actions:

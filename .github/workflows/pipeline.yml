@@ -5,170 +5,26 @@ on:
     - '*'
   pull_request:
 jobs:
+  lint-markdown:
+    uses: PurpleBooth/common-pipelines/.github/workflows/markdown-check.yml@main
+  commit-checks:
+    uses: PurpleBooth/common-pipelines/.github/workflows/commit-check.yml@main
+  rust-checks:
+    uses: PurpleBooth/common-pipelines/.github/workflows/rust-check.yml@main
+    with:
+      run_on_windows: false
   specdown:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-        - os: macos-latest
-          specdown: https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-x86_64-apple-darwin
-        - os: ubuntu-latest
-          specdown: https://github.com/specdown/specdown/releases/download/v0.41.0/specdown-x86_64-unknown-linux-gnu
-    steps:
-    - uses: actions/checkout@v2.3.4
-    - uses: actions/cache@v2.1.6
-      with:
-        path: |
-          .cache
-          ~/.cargo/registry
-          ~/.cargo/git
-          ~/.cargo/bin
-          target
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-    - run: |
-        set -euo pipefail
-        mkdir -p "$GITHUB_WORKSPACE/target/assorted/bin"
-        curl -Lo "$GITHUB_WORKSPACE/target/assorted/bin/specdown" "$SPECDOWN_URL"
-        chmod +x "$GITHUB_WORKSPACE/target/assorted/bin/specdown"
-        echo "$GITHUB_WORKSPACE/target/assorted/bin" >> "$GITHUB_PATH"
-      env:
-        SPECDOWN_URL: ${{ matrix.specdown }}
-      name: Download Specdown
-    - uses: actions-rs/toolchain@v1.0.7
-      with:
-        profile: minimal
-        toolchain: stable
-        default: true
-    - run: make specdown
-  cargo-audit:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2.3.4
-      name: Checkout the repository
-    - uses: actions/cache@v2.1.6
-      name: Cache cargo
-      with:
-        path: |
-          .cache
-          ~/.cargo/registry
-          ~/.cargo/git
-          ~/.cargo/bin
-          target
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-    - uses: actions-rs/audit-check@v1.2.0
-      name: Audit check cargo packages
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+    uses: PurpleBooth/common-pipelines/.github/workflows/specdown-check.yml@main
+    with:
+      run_on_windows: false
 
-  versio-plan:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2.3.4
-      with:
-        fetch-depth: 0
-    - uses: chaaz/versio-actions/install@v1.2
-      name: Install versio
-    - name: Check projects
-      run: versio check
-      env:
-        RUST_LOG: versio=trace
-        RUST_BACKTRACE: 1
-    - name: Print changes
-      run: versio plan
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_USER: ${{ github.actor }}
-        RUST_LOG: versio=trace
-        RUST_BACKTRACE: 1
-
-  cargo-check:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2.3.4
-    - uses: actions/cache@v2.1.6
-      with:
-        path: |
-          .cache
-          ~/.cargo/registry
-          ~/.cargo/git
-          ~/.cargo/bin
-          target
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-    - uses: actions-rs/toolchain@v1.0.7
-      with:
-        profile: minimal
-        toolchain: stable
-        default: true
-    - uses: actions-rs/cargo@v1.0.3
-      with:
-        command: check
-  cargo-test:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-        - os: macos-latest
-        - os: ubuntu-latest
-        - os: windows-latest
-    steps:
-    - uses: actions/checkout@v2.3.4
-    - uses: actions/cache@v2.1.6
-      with:
-        path: |
-          .cache
-          ~/.cargo/registry
-          ~/.cargo/git
-          ~/.cargo/bin
-          target
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-    - uses: actions-rs/toolchain@v1.0.7
-      with:
-        profile: minimal
-        toolchain: stable
-        default: true
-    - uses: actions-rs/cargo@v1.0.3
-      with:
-        args: ' --locked'
-        command: test
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2.3.4
-    - uses: actions/cache@v2.1.6
-      with:
-        path: |
-          .cache
-          ~/.cargo/registry
-          ~/.cargo/git
-          ~/.cargo/bin
-          target
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-    - uses: actions-rs/toolchain@v1.0.7
-      with:
-        profile: minimal
-        toolchain: stable
-        default: true
-        components: rustfmt, clippy
-    - uses: actions-rs/cargo@v1.0.3
-      with:
-        command: fmt
-        args: --all -- --check
-    - uses: actions-rs/cargo@v1.0.3
-      with:
-        command: clippy
-        args: --all-targets --all-features -- -D warnings -Dclippy::all -D clippy::pedantic
-          -D clippy::cargo -A clippy::multiple-crate-versions
-    - uses: gaurav-nelson/github-action-markdown-link-check@1.0.13
   release:
     if: github.ref == 'refs/heads/main'
     needs:
-    - specdown
-    - versio-plan
+    - lint-markdown
+    - commit-checks
     - cargo-test
-    - lint
-    - cargo-audit
-    - cargo-check
+    - specdown
     outputs:
       version_bump: ${{ steps.version_bump.outputs.version_bump }}
       current_version: ${{ steps.current_version.outputs.current_version }}
