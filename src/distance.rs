@@ -1,7 +1,12 @@
 use crate::domain::Coords;
 
 pub fn distance(a: &Coords, b: &Coords) -> f64 {
-    ((b.x - a.x).powi(2) + (b.y - a.y).powi(2) + (b.z - a.z).powi(2)).sqrt()
+    (b.z - a.z)
+        .mul_add(
+            b.z - a.z,
+            (b.y - a.y).mul_add(b.y - a.y, (b.x - a.x).powi(2)),
+        )
+        .sqrt()
 }
 
 #[cfg(test)]

@@ -32,15 +32,15 @@ build:
 ## Lint it
 lint:
 	cargo fmt --all -- --check
-	cargo clippy --all-features -- -D warnings -Dclippy::all -D clippy::pedantic -D clippy::cargo -A clippy::multiple-crate-versions
+	cargo clippy --all-features -- -D warnings -Dclippy::all -D clippy::pedantic -D clippy::cargo
 	cargo check
 	cargo audit
 
 .PHONY: fmt
 ## Format what can be formatted
 fmt:
-	cargo fix --allow-dirty
-	cargo +nightly clippy --allow-dirty --fix -Z unstable-options --all-features -- -D warnings -Dclippy::all -D clippy::pedantic
+	cargo fix --allow-dirty --allow-staged
+	cargo +nightly clippy --allow-dirty --allow-staged --fix -Z unstable-options --all-features -- -D warnings -Dclippy::all -D clippy::pedantic -D clippy::cargo -D clippy::nursery
 	cargo fmt --all
 	yamlfmt -w .github/*.yml .github/workflows/*.yml .*.yml
 

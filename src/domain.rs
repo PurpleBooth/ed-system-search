@@ -37,15 +37,15 @@ pub enum SystemFilter {
     ExcludeSystemsWithPlayerFactions,
 }
 
-pub(crate) fn allegiance(allegiance: String) -> SystemFilter {
+pub const fn allegiance(allegiance: String) -> SystemFilter {
     SystemFilter::Allegiance(allegiance)
 }
 
-pub(crate) fn government(government: String) -> SystemFilter {
+pub const fn government(government: String) -> SystemFilter {
     SystemFilter::Government(government)
 }
 
-pub(crate) fn min_large_docks(count: usize) -> SystemFilter {
+pub fn min_large_docks(count: usize) -> SystemFilter {
     SystemFilter::MinimumStationCount(
         vec![
             String::from("Asteroid base"),
@@ -59,7 +59,7 @@ pub(crate) fn min_large_docks(count: usize) -> SystemFilter {
     )
 }
 
-pub(crate) fn min_docks(count: usize) -> SystemFilter {
+pub fn min_docks(count: usize) -> SystemFilter {
     SystemFilter::MinimumStationCount(
         vec![
             String::from("Asteroid base"),
@@ -76,7 +76,7 @@ pub(crate) fn min_docks(count: usize) -> SystemFilter {
     )
 }
 
-pub(crate) fn max_distance_from_sol(light_seconds: f64) -> SystemFilter {
+pub const fn max_distance_from_sol(light_seconds: f64) -> SystemFilter {
     SystemFilter::MaximumDistanceFrom(
         Coords {
             x: 0.0,
@@ -87,15 +87,15 @@ pub(crate) fn max_distance_from_sol(light_seconds: f64) -> SystemFilter {
     )
 }
 
-pub(crate) fn max_distance_from_reference(reference: Coords, light_seconds: f64) -> SystemFilter {
+pub const fn max_distance_from_reference(reference: Coords, light_seconds: f64) -> SystemFilter {
     SystemFilter::MaximumDistanceFrom(reference, light_seconds)
 }
 
-pub(crate) fn min_population(count: u128) -> SystemFilter {
+pub const fn min_population(count: u128) -> SystemFilter {
     SystemFilter::MinimumPopulation(count)
 }
 
-pub(crate) fn min_starports(count: usize) -> SystemFilter {
+pub fn min_starports(count: usize) -> SystemFilter {
     SystemFilter::MinimumStationCount(
         vec![
             String::from("Coriolis Starport"),
@@ -108,7 +108,7 @@ pub(crate) fn min_starports(count: usize) -> SystemFilter {
     )
 }
 
-pub(crate) fn exclude_permit_locked() -> SystemFilter {
+pub fn exclude_permit_locked() -> SystemFilter {
     SystemFilter::ExcludeSystems(
         vec![
             String::from("Sol"),
@@ -184,7 +184,7 @@ pub(crate) fn exclude_permit_locked() -> SystemFilter {
 }
 
 #[allow(clippy::too_many_lines)]
-pub(crate) fn exclude_rare_commodity() -> SystemFilter {
+pub fn exclude_rare_commodity() -> SystemFilter {
     SystemFilter::ExcludeSystems(
         vec![
             String::from("47 Ceti"),
@@ -318,10 +318,10 @@ pub(crate) fn exclude_rare_commodity() -> SystemFilter {
     )
 }
 
-pub(crate) fn max_number_of_factions(count: usize) -> SystemFilter {
+pub const fn max_number_of_factions(count: usize) -> SystemFilter {
     SystemFilter::MaximumFactionCount(count)
 }
 
-pub(crate) fn exclude_player_faction() -> SystemFilter {
+pub const fn exclude_player_faction() -> SystemFilter {
     SystemFilter::ExcludeSystemsWithPlayerFactions
 }

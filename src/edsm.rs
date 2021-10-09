@@ -107,7 +107,7 @@ impl domain::Faction for Faction {
     }
 }
 
-pub(crate) fn parse<R: Read>(file: R) -> Result<Vec<System>, Error> {
+pub fn parse<R: Read>(file: R) -> Result<Vec<System>, Error> {
     serde_json::from_reader::<_, _>(file).map_err(Error::Parse)
 }
 
@@ -126,7 +126,7 @@ mod tests {
 
     #[test]
     fn invalid_json() {
-        assert!(parse("This is not valid json".as_bytes()).is_err());
+        assert!(parse(b"This is not valid json".as_slice()).is_err());
     }
 
     #[test]
