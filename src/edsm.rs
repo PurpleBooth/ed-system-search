@@ -119,6 +119,7 @@ pub enum Error {
 
 #[cfg(test)]
 mod tests {
+
     use indoc::indoc;
 
     use crate::domain::System as DomainSystem;
@@ -126,7 +127,7 @@ mod tests {
 
     #[test]
     fn invalid_json() {
-        assert!(parse(b"This is not valid json".as_slice()).is_err());
+        assert!(parse(b"This is not valid json" as &[u8]).is_err());
     }
 
     #[test]
