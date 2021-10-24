@@ -20,24 +20,29 @@ Billie Thompson <billie@billiecodes.com>
 Find interesting systems in the EDSM data dump
 
 USAGE:
-    ed-system-search [FLAGS] [OPTIONS] <edsm-path>
+    ed-system-search [OPTIONS] <edsm-path>
 
 ARGS:
     <edsm-path>    This is the path to th EDSM dump in .json.gz format
-
-FLAGS:
-        --exclude-permit-locked     Exclude permit locked systems
-        --exclude-player-faction    Exclude systems that contain a player faction
-        --exclude-rare-commodity    Exclude systems that sell rare commodities
-    -h, --help                      Print help information
-    -V, --version                   Print version information
 
 OPTIONS:
         --allegiance <MAJOR_FACTION>
             Filter by allegiance
 
+        --exclude-permit-locked
+            Exclude permit locked systems
+
+        --exclude-player-faction
+            Exclude systems that contain a player faction
+
+        --exclude-rare-commodity
+            Exclude systems that sell rare commodities
+
         --government <GOVERNMENT_TYPE>
             Filter by government
+
+    -h, --help
+            Print help information
 
         --max-distance-from-reference <LIGHT_SECONDS>
             Filter the systems that are further than this distance from the reference
@@ -63,6 +68,9 @@ OPTIONS:
 
         --reference <SYSTEM_NAME>
             A reference system used by other filters
+
+    -V, --version
+            Print version information
 ```
 
 ## Installing

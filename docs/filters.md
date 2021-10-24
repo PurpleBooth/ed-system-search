@@ -180,6 +180,7 @@ ed-system-search --max-number-of-factions 1 "$EDSM_GZ_PATH"
 4 Sextantis
 Capricorni Sector KC-V c2-13
 Col 285 Sector MH-V d2-50
+HIP 22460
 HIP 58832
 HIP 89396
 HIP 90024
