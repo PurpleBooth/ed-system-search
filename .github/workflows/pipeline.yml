@@ -234,7 +234,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         bodyFile: CHANGELOG.md
         name: Release ${{ steps.get_version.outputs.VERSION }}
-        tag: ${{ steps.get_version.outputs.VERSION }}
+        tag: v${{ needs.release.outputs.current_version }}
         artifacts: ./potential-faction-systems/*,./bins/*
 
   generate-formula:
