@@ -180,11 +180,15 @@ ed-system-search --max-number-of-factions 1 "$EDSM_GZ_PATH"
 4 Sextantis
 Capricorni Sector KC-V c2-13
 Col 285 Sector MH-V d2-50
+Col 359 Sector UM-T c4-6
+Eol Prou GE-A c1-291
 HIP 58832
 HIP 89396
 HIP 90024
 Hyades Sector RI-T c3-11
+IC 1287 Sector RO-Q b5-1
 Mbooni
+Snake Sector OD-S b4-2
 ```
 
 if it's not a number it'll fail
