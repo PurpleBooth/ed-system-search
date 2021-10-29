@@ -22,11 +22,9 @@ function safe_specdown() {
 			TEMPORARY_DIR="$(mktemp -d)"
 			cd "$TEMPORARY_DIR"
 			mkdir "$TEMPORARY_DIR/repo"
-
 			cd "$TEMPORARY_DIR/repo"
-			export PATH="$REPOSITORY_DIR/target/release/:$PATH"
 			export EDSM_GZ_PATH
-			specdown run "$MARKDOWN_PATH"
+			specdown run --add-path "$REPOSITORY_DIR/target/release/" "$MARKDOWN_PATH"
 		)
 	else
 		echo "$1 is not valid"
