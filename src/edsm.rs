@@ -45,17 +45,23 @@ pub struct System {
     pub(crate) government: Option<String>,
 }
 
-impl domain::System for System {
+impl<'system> domain::System<'system> for System {
     fn name(&self) -> &str {
         &self.name
     }
 
-    fn allegiance(&self) -> String {
-        self.allegiance.clone().unwrap_or_else(|| String::from(""))
+    fn allegiance(&self) -> &str {
+        match &self.allegiance {
+            None => "",
+            Some(value) => value,
+        }
     }
 
-    fn government(&self) -> String {
-        self.government.clone().unwrap_or_else(|| String::from(""))
+    fn government(&self) -> &str {
+        match &self.government {
+            None => "",
+            Some(value) => value,
+        }
     }
 
     fn stations(&self) -> Vec<Box<dyn domain::Station>> {
@@ -91,13 +97,16 @@ impl domain::System for System {
     }
 
     fn population(&self) -> u128 {
-        self.population.unwrap_or(0)
+        self.population.unwrap_or_default()
     }
 }
 
 impl domain::Station for Station {
-    fn station_type(&self) -> Option<String> {
-        self.station_type.clone()
+    fn station_type(&self) -> Option<&str> {
+        match &self.station_type {
+            None => None,
+            Some(value) => Some(value),
+        }
     }
 }
 

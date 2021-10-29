@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use crate::distance;
 use crate::domain::{Coords, System, SystemFilter};
 
-pub fn filter<'a, T: System + Clone>(
+pub fn filter<'a, T: System<'a> + Clone>(
     search_options: &'a [SystemFilter],
     systems: &'a [T],
 ) -> Vec<T> {
@@ -14,7 +14,7 @@ pub fn filter<'a, T: System + Clone>(
                 SystemFilter::MaximumDistanceFrom(reference, distance_from_reference_ls) => {
                     has_location_within_max_distance_from_reference(
                         *distance_from_reference_ls,
-                        *reference,
+                        reference,
                         *system,
                     )
                 }
@@ -40,26 +40,25 @@ pub fn filter<'a, T: System + Clone>(
     systems
 }
 
-fn is_excluded_system<T: System>(excluded_systems: &HashSet<String>, system: &T) -> bool {
+fn is_excluded_system<'a, T: System<'a>>(excluded_systems: &HashSet<&str>, system: &T) -> bool {
     excluded_systems.contains(system.name())
 }
-fn has_allegiance<T: System>(allegiance: &str, system: &T) -> bool {
+fn has_allegiance<'a, T: System<'a>>(allegiance: &str, system: &T) -> bool {
     system.allegiance().eq(allegiance)
 }
 
-fn has_government<T: System>(government: &str, system: &T) -> bool {
+fn has_government<'a, T: System<'a>>(government: &str, system: &T) -> bool {
     system.government().eq(government)
 }
 
-fn has_docks<T: System>(min_large_docks: usize, types: &HashSet<String>, system: &T) -> bool {
+fn has_docks<'a, T: System<'a>>(min_large_docks: usize, types: &HashSet<&str>, system: &T) -> bool {
     system
         .stations()
         .iter()
         .map(|x| x.station_type())
         .filter(|x| {
             matches!(
-                x.clone()
-                    .filter(|station_type| types.contains(station_type)),
+                (*x).filter(|station_type| types.contains(station_type)),
                 Some(_)
             )
         })
@@ -67,24 +66,24 @@ fn has_docks<T: System>(min_large_docks: usize, types: &HashSet<String>, system:
         >= min_large_docks
 }
 
-fn has_max_number_of_factions<T: System>(max_factions: usize, system: &T) -> bool {
+fn has_max_number_of_factions<'a, T: System<'a>>(max_factions: usize, system: &T) -> bool {
     system.factions().len() <= max_factions
 }
 
-fn has_player_faction<T: System>(system: &T) -> bool {
+fn has_player_faction<'a, T: System<'a>>(system: &T) -> bool {
     system.factions().iter().any(|faction| faction.is_player())
 }
 
-fn has_min_population<T: System>(min_population: u128, system: &T) -> bool {
+fn has_min_population<'a, T: System<'a>>(min_population: u128, system: &T) -> bool {
     system.population() >= min_population
 }
 
-fn has_location_within_max_distance_from_reference<T: System>(
+fn has_location_within_max_distance_from_reference<'a, T: System<'a>>(
     distance_from_reference_ls: f64,
-    reference: Coords,
+    reference: &Coords,
     system: &T,
 ) -> bool {
-    distance::distance(&reference, &system.coordinates()) <= distance_from_reference_ls as f64
+    distance::distance(reference, &system.coordinates()) <= distance_from_reference_ls as f64
 }
 
 #[cfg(test)]
@@ -339,7 +338,7 @@ mod tests {
         assert_eq!(
             filter(
                 &[max_distance_from_reference(
-                    crate::domain::Coords {
+                    domain::Coords {
                         x: f64::from(0),
                         y: f64::from(0),
                         z: f64::from(0),
@@ -386,10 +385,7 @@ mod tests {
             make_system_with_allegiance("Sanos", "Federation"),
             sol.clone(),
         ];
-        assert_eq!(
-            filter(&[allegiance(String::from("Alliance"))], &input),
-            vec![sol]
-        );
+        assert_eq!(filter(&[allegiance("Alliance")], &input), vec![sol]);
     }
 
     #[test]
@@ -399,9 +395,6 @@ mod tests {
             make_system_with_government("Sanos", "Corporate"),
             sol.clone(),
         ];
-        assert_eq!(
-            filter(&[government(String::from("Democracy"))], &input),
-            vec![sol]
-        );
+        assert_eq!(filter(&[government("Democracy")], &input), vec![sol]);
     }
 }

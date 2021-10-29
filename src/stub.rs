@@ -11,20 +11,20 @@ pub struct System {
     pub government: String,
 }
 
-impl crate::domain::System for System {
+impl<'system> domain::System<'system> for System {
     fn name(&self) -> &str {
         &self.name
     }
 
-    fn allegiance(&self) -> String {
-        self.allegiance.clone()
+    fn allegiance(&self) -> &str {
+        &self.allegiance
     }
 
-    fn government(&self) -> String {
-        self.government.clone()
+    fn government(&self) -> &str {
+        &self.government
     }
 
-    fn stations(&self) -> Vec<Box<dyn crate::domain::Station>> {
+    fn stations(&self) -> Vec<Box<dyn domain::Station>> {
         self.stations
             .clone()
             .into_iter()
@@ -40,7 +40,7 @@ impl crate::domain::System for System {
             .collect::<Vec<Box<dyn domain::Faction>>>()
     }
 
-    fn coordinates(&self) -> crate::domain::Coords {
+    fn coordinates(&self) -> domain::Coords {
         self.coords
     }
 
@@ -54,9 +54,12 @@ pub struct Station {
     pub(crate) station_type: Option<String>,
 }
 
-impl crate::domain::Station for Station {
-    fn station_type(&self) -> Option<String> {
-        self.station_type.clone()
+impl domain::Station for Station {
+    fn station_type(&self) -> Option<&str> {
+        match &self.station_type {
+            None => None,
+            Some(value) => Some(value),
+        }
     }
 }
 

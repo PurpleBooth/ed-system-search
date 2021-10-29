@@ -152,10 +152,10 @@ pub fn app() -> App<'static> {
         )
 }
 
-pub fn parameters_from_matches<T: System>(
-    matches: &ArgMatches,
-    systems: &[T],
-) -> Result<Vec<domain::SystemFilter>, Error> {
+pub fn parameters_from_matches<'a, T: System<'a>>(
+    matches: &'a ArgMatches,
+    systems: &'a [T],
+) -> Result<Vec<domain::SystemFilter<'a>>, Error> {
     let reference = matches
         .value_of("reference")
         .map(|reference_name| {
@@ -168,12 +168,8 @@ pub fn parameters_from_matches<T: System>(
         .map_or(Ok(None), |v| v.map(Some))?;
 
     return Ok(vec![
-        matches
-            .value_of("allegiance")
-            .map(|value| allegiance(String::from(value))),
-        matches
-            .value_of("government")
-            .map(|value| government(String::from(value))),
+        matches.value_of("allegiance").map(allegiance),
+        matches.value_of("government").map(government),
         matches
             .value_of("min-docks-large")
             .map(|value| usize::from_str(value).map_err(Error::from))
@@ -378,7 +374,7 @@ mod tests {
         ]);
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
-            vec![allegiance("Alliance".to_string())]
+            vec![allegiance("Alliance")]
         );
     }
 
@@ -391,7 +387,7 @@ mod tests {
         ]);
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
-            vec![government("Democracy".to_string())]
+            vec![government("Democracy")]
         );
     }
 

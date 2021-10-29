@@ -30,7 +30,7 @@ fn main() -> Result<(), Error> {
     Ok(())
 }
 
-fn display_systems<T: System>(systems: Vec<T>) {
+fn display_systems<'a, T: System<'a>>(systems: Vec<T>) {
     for system in systems {
         println!("{}", system.name());
     }
