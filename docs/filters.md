@@ -178,17 +178,38 @@ ed-system-search --max-number-of-factions 1 "$EDSM_GZ_PATH"
 
 ``` text,verify(script_name="max-number-of-factions",stream=stdout)
 4 Sextantis
+Bleae Thua KY-L c7-12
+Bleae Thua WD-M b49-1
+Bleia Dryiae EE-E d13-178
+Bleia Dryiae HK-Y c17-9
+Byeia Eurk IE-L b49-4
+Byeia Eurk OC-I b37-13
 Capricorni Sector KC-V c2-13
 Col 285 Sector MH-V d2-50
 Col 359 Sector UM-T c4-6
+Droju OH-T a99-0
+Dryio Flyuae KV-P b8-112
+Dryooe Flyou NQ-G b27-103
+Dryooe Flyou WB-T b47-10
+Eoch Flyuae QK-E d12-2118
 Eol Prou GE-A c1-291
+Gria Drye IR-F a38-10
 HIP 58832
 HIP 89396
 HIP 90024
 Hyades Sector RI-T c3-11
 IC 1287 Sector RO-Q b5-1
+Lysoosms YS-U d2-61
 Mbooni
+NGC 6530 Sector ZE-X b2-0
+Nyeajaae NB-Q b52-14
+Nyeajaae SC-B b33-7
+Plaa Aescs QD-T c3-28
+Pru Euq WO-D b53-8
+Smojue IY-Q b32-1
+Smojue PZ-R c4-5
 Snake Sector OD-S b4-2
+Trifid Sector GW-W d1-220
 ```
 
 if it's not a number it'll fail
