@@ -37,11 +37,11 @@ pub enum SystemFilter<'a> {
     ExcludeSystemsWithPlayerFactions,
 }
 
-pub const fn allegiance(allegiance: &str) -> SystemFilter {
+pub const fn allegiance(allegiance: &str) -> SystemFilter<'_> {
     SystemFilter::Allegiance(allegiance)
 }
 
-pub const fn government(government: &str) -> SystemFilter {
+pub const fn government(government: &str) -> SystemFilter<'_> {
     SystemFilter::Government(government)
 }
 

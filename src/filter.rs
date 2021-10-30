@@ -4,7 +4,7 @@ use crate::distance;
 use crate::domain::{Coords, System, SystemFilter};
 
 pub fn filter<'a, T: System<'a> + Clone>(
-    search_options: &'a [SystemFilter],
+    search_options: &'a [SystemFilter<'_>],
     systems: &'a [T],
 ) -> Vec<T> {
     let mut systems: Vec<_> = systems
