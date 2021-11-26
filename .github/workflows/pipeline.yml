@@ -221,7 +221,8 @@ jobs:
     - uses: PurpleBooth/changelog-action@v0.3.0
       name: Generate changelog
       with:
-        args: -v v${{ needs.release.outputs.previous_version }}..v${{ needs.release.outputs.current_version }}
+        args: -v v${{ needs.release.outputs.previous_version }}..v${{ needs.release.outputs.current_version
+          }}
     - env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       id: create_release
@@ -241,11 +242,11 @@ jobs:
     name: Generate Homebrew Formula
     runs-on: ubuntu-latest
     steps:
-      - uses: PurpleBooth/generate-formula-action@v0.1.4
-        name: Create PR for formula
-        with:
-          current_version: ${{ needs.release.outputs.current_version }}
-          previous_version: ${{ needs.release.outputs.previous_version }}
-          committer_token: ${{ secrets.COMMITTER_TOKEN }}
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg_passphrase: ${{ secrets.GPG_PASSPHRASE }}
+    - uses: PurpleBooth/generate-formula-action@v0.1.4
+      name: Create PR for formula
+      with:
+        current_version: ${{ needs.release.outputs.current_version }}
+        previous_version: ${{ needs.release.outputs.previous_version }}
+        committer_token: ${{ secrets.COMMITTER_TOKEN }}
+        gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+        gpg_passphrase: ${{ secrets.GPG_PASSPHRASE }}

@@ -182,17 +182,30 @@ Bleae Thua KY-L c7-12
 Bleae Thua WD-M b49-1
 Bleia Dryiae EE-E d13-178
 Bleia Dryiae HK-Y c17-9
+Blua Eaec RD-Z d1-1228
+Blua Eaec US-Z b46-4
+Blua Eaec WW-E c14-1293
+Boelts UB-P b24-98
+Boelts YK-P c21-5
+Boelts ZN-Y b5-69
 Byeia Eurk IE-L b49-4
 Byeia Eurk OC-I b37-13
 Capricorni Sector KC-V c2-13
+Clooku AA-Q b37-41
+Clooku QA-E c28-713
+Clooku VJ-E b16-27
 Col 285 Sector MH-V d2-50
 Col 359 Sector UM-T c4-6
 Droju OH-T a99-0
 Dryio Flyuae KV-P b8-112
 Dryooe Flyou NQ-G b27-103
 Dryooe Flyou WB-T b47-10
+Eoch Flyuae PL-D c138
 Eoch Flyuae QK-E d12-2118
+Eoch Flyuae ZU-Y b17-16
 Eol Prou GE-A c1-291
+Flyiedge JE-Z b46-9
+Flyiedge VN-W c4-51
 Gria Drye IR-F a38-10
 HIP 58832
 HIP 89396
@@ -206,9 +219,17 @@ Nyeajaae NB-Q b52-14
 Nyeajaae SC-B b33-7
 Plaa Aescs QD-T c3-28
 Pru Euq WO-D b53-8
+Prua Phoe MI-B b17-5
+Prua Phoe PI-I b55-3
+Prua Phoe VF-M d8-1046
+Skaudai GM-S b35-5
+Skaude DR-A c2-1
+Skaude ZK-X e1-203
 Smojue IY-Q b32-1
 Smojue PZ-R c4-5
 Snake Sector OD-S b4-2
+Stuelou UT-E b17-51
+Stuelou VV-X c17-395
 Trifid Sector GW-W d1-220
 ```
 
