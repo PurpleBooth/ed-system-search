@@ -20,12 +20,12 @@ pub fn app() -> App<'static> {
         .about(env!("CARGO_PKG_DESCRIPTION"))
         .arg(
             Arg::new("edsm-path")
-                .about("This is the path to th EDSM dump in .json.gz format")
+                .help("This is the path to th EDSM dump in .json.gz format")
                 .required(true),
         )
         .arg(
             Arg::new("min-docks-large")
-                .about(
+                .help(
                     "Filter the systems that are have less than the given number of docks with room for large ships",
                 )
                 .long("min-docks-large")
@@ -35,7 +35,7 @@ pub fn app() -> App<'static> {
         )
         .arg(
             Arg::new("allegiance")
-                .about(
+                .help(
                     "Filter by allegiance",
                 )
                 .long("allegiance")
@@ -45,7 +45,7 @@ pub fn app() -> App<'static> {
         )
         .arg(
             Arg::new("government")
-                .about(
+                .help(
                     "Filter by government",
                 )
                 .long("government")
@@ -55,7 +55,7 @@ pub fn app() -> App<'static> {
         )
         .arg(
             Arg::new("min-starports")
-                .about(
+                .help(
                     "Filter the systems that are have less than the given number of starports"
                 )
                 .long("min-starports")
@@ -65,7 +65,7 @@ pub fn app() -> App<'static> {
         )
         .arg(
             Arg::new("min-docks")
-                .about(
+                .help(
                     "Filter the systems that are have less than the given number of docks"
                 )
                 .long("min-docks")
@@ -75,7 +75,7 @@ pub fn app() -> App<'static> {
         )
         .arg(
             Arg::new("min-population")
-                .about(
+                .help(
                     "Filter the systems that are have less than the given population"
                 )
                 .long("min-population")
@@ -85,7 +85,7 @@ pub fn app() -> App<'static> {
         )
         .arg(
             Arg::new("max-distance-from-sol")
-                .about(
+                .help(
                     "Filter the systems that are further than this distance from sol"
                 )
                 .long("max-distance-from-sol")
@@ -95,7 +95,7 @@ pub fn app() -> App<'static> {
         )
         .arg(
             Arg::new("max-distance-from-reference")
-                .about(
+                .help(
                     "Filter the systems that are further than this distance from the reference"
                 )
                 .long("max-distance-from-reference")
@@ -105,7 +105,7 @@ pub fn app() -> App<'static> {
         )
         .arg(
             Arg::new("max-number-of-factions")
-                .about(
+                .help(
                     "Filter the systems that have more factions than the number given"
                 )
                 .long("max-number-of-factions")
@@ -115,7 +115,7 @@ pub fn app() -> App<'static> {
         )
         .arg(
             Arg::new("reference")
-                .about(
+                .help(
                     "A reference system used by other filters"
                 )
                 .long("reference")
@@ -125,7 +125,7 @@ pub fn app() -> App<'static> {
         )
         .arg(
             Arg::new("exclude-permit-locked")
-                .about(
+                .help(
                     "Exclude permit locked systems"
                 )
                 .long("exclude-permit-locked")
@@ -134,7 +134,7 @@ pub fn app() -> App<'static> {
         )
         .arg(
             Arg::new("exclude-player-faction")
-                .about(
+                .help(
                     "Exclude systems that contain a player faction"
                 )
                 .long("exclude-player-faction")
@@ -143,7 +143,7 @@ pub fn app() -> App<'static> {
         )
         .arg(
             Arg::new("exclude-rare-commodity")
-                .about(
+                .help(
                     "Exclude systems that sell rare commodities"
                 )
                 .long("exclude-rare-commodity")
