@@ -1,6 +1,6 @@
 [package]
 name = "ed-system-search"
-version = "1.1.17"
+version = "1.1.18"
 authors = ["Billie Thompson <billie@billiecodes.com>"]
 edition = "2018"
 description = "Find interesting systems in the EDSM data dump"
