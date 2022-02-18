@@ -1,7 +1,7 @@
 use std::num::{ParseFloatError, ParseIntError};
 use std::str::FromStr;
 
-use clap::{crate_authors, crate_version, App, Arg, ArgMatches};
+use clap::{crate_authors, crate_version, Arg, ArgMatches, Command};
 use thiserror::Error as ThisError;
 
 use crate::domain;
@@ -12,8 +12,8 @@ use crate::domain::{
 };
 
 #[allow(clippy::too_many_lines)]
-pub fn app() -> App<'static> {
-    App::new(String::from(env!("CARGO_PKG_NAME")))
+pub fn cli() -> Command<'static> {
+    Command::new(String::from(env!("CARGO_PKG_NAME")))
         .bin_name(String::from(env!("CARGO_PKG_NAME")))
         .version(crate_version!())
         .author(crate_authors!())
@@ -234,7 +234,7 @@ pub enum Error {
 
 #[cfg(test)]
 mod tests {
-    use crate::cli::{app, parameters_from_matches};
+    use crate::cli::{cli, parameters_from_matches};
     use crate::domain::{
         allegiance, government, max_distance_from_reference, max_distance_from_sol, min_docks,
         min_large_docks, min_population, min_starports, Coords,
@@ -243,7 +243,7 @@ mod tests {
 
     #[test]
     fn no_switches() {
-        let args = app().get_matches_from(vec!["ed-system-search", "some-edsm-dump.json.gz"]);
+        let args = cli().get_matches_from(vec!["ed-system-search", "some-edsm-dump.json.gz"]);
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![]
@@ -252,7 +252,7 @@ mod tests {
 
     #[test]
     fn large_docks_invalid() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--min-docks-large=banana",
             "some-edsm-dump.json.gz",
@@ -262,7 +262,7 @@ mod tests {
 
     #[test]
     fn large_docks_present() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--min-docks-large=10",
             "some-edsm-dump.json.gz",
@@ -275,7 +275,7 @@ mod tests {
 
     #[test]
     fn min_population_invalid() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--min-population=banana",
             "some-edsm-dump.json.gz",
@@ -285,7 +285,7 @@ mod tests {
 
     #[test]
     fn min_population_present() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--min-population=10",
             "some-edsm-dump.json.gz",
@@ -298,7 +298,7 @@ mod tests {
 
     #[test]
     fn docks_invalid() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--min-docks=banana",
             "some-edsm-dump.json.gz",
@@ -308,7 +308,7 @@ mod tests {
 
     #[test]
     fn docks_present() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--min-docks=10",
             "some-edsm-dump.json.gz",
@@ -321,7 +321,7 @@ mod tests {
 
     #[test]
     fn starports_invalid() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--min-starports=banana",
             "some-edsm-dump.json.gz",
@@ -331,7 +331,7 @@ mod tests {
 
     #[test]
     fn starports_present() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--min-starports=10",
             "some-edsm-dump.json.gz",
@@ -344,7 +344,7 @@ mod tests {
 
     #[test]
     fn population_invalid() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--min-population=banana",
             "some-edsm-dump.json.gz",
@@ -354,7 +354,7 @@ mod tests {
 
     #[test]
     fn population_present() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--min-population=25000000000",
             "some-edsm-dump.json.gz",
@@ -367,7 +367,7 @@ mod tests {
 
     #[test]
     fn allegiance_matches() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--allegiance=Alliance",
             "some-edsm-dump.json.gz",
@@ -380,7 +380,7 @@ mod tests {
 
     #[test]
     fn government_matches() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--government=Democracy",
             "some-edsm-dump.json.gz",
@@ -393,7 +393,7 @@ mod tests {
 
     #[test]
     fn exclude_permit_locked() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--exclude-permit-locked",
             "some-edsm-dump.json.gz",
@@ -406,7 +406,7 @@ mod tests {
 
     #[test]
     fn exclude_rare_commodity() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--exclude-rare-commodity",
             "some-edsm-dump.json.gz",
@@ -419,7 +419,7 @@ mod tests {
 
     #[test]
     fn exclude_player_faction() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--exclude-player-faction",
             "some-edsm-dump.json.gz",
@@ -432,7 +432,7 @@ mod tests {
 
     #[test]
     fn max_factions_invalid() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--max-number-of-factions=banana",
             "some-edsm-dump.json.gz",
@@ -442,7 +442,7 @@ mod tests {
 
     #[test]
     fn max_factions_present() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--max-number-of-factions=10",
             "some-edsm-dump.json.gz",
@@ -455,7 +455,7 @@ mod tests {
 
     #[test]
     fn distance_from_sol_invalid() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--max-distance-from-sol=banana",
             "some-edsm-dump.json.gz",
@@ -465,7 +465,7 @@ mod tests {
 
     #[test]
     fn distance_from_sol_present() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--max-distance-from-sol=10",
             "some-edsm-dump.json.gz",
@@ -478,7 +478,7 @@ mod tests {
 
     #[test]
     fn distance_from_reference_invalid() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--max-distance-from-reference=banana",
             "--reference=Sol",
@@ -505,7 +505,7 @@ mod tests {
 
     #[test]
     fn reference_system_not_found() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--max-distance-from-reference=10",
             "--reference=Missing",
@@ -532,7 +532,7 @@ mod tests {
 
     #[test]
     fn both_reference_and_distance_present() {
-        let args = app().get_matches_from(vec![
+        let args = cli().get_matches_from(vec![
             "ed-system-search",
             "--max-distance-from-reference=10",
             "--reference=Sol",

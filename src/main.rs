@@ -29,7 +29,7 @@ mod stub;
 
 fn main() -> Result<(), Error> {
     miette::set_panic_hook();
-    let matches = cli::app().get_matches();
+    let matches = cli::cli().get_matches();
     let path = matches.value_of("edsm-path").unwrap();
     let compressed_file = File::open(path)?;
     let file = GzDecoder::new(compressed_file);
