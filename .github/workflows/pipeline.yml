@@ -31,7 +31,7 @@ jobs:
       previous_version: ${{ steps.previous_version.outputs.previous_version }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2.4.0
+    - uses: actions/checkout@v3
       with:
         token: ${{ secrets.COMMITTER_TOKEN }}
         fetch-depth: 0
@@ -73,7 +73,7 @@ jobs:
     runs-on: ubuntu-latest
     if: needs.release.outputs.version_bump
     steps:
-    - uses: actions/checkout@v2.4.0
+    - uses: actions/checkout@v3
       name: Checkout the repository
       with:
         ref: v${{ needs.release.outputs.current_version }}
@@ -90,7 +90,7 @@ jobs:
     - release
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2.4.0
+    - uses: actions/checkout@v3
       name: Checkout the repository
       with:
         ref: v${{ needs.release.outputs.current_version }}
@@ -133,7 +133,7 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       name: Install additional dependencies
-    - uses: actions/checkout@v2.4.0
+    - uses: actions/checkout@v3
       name: Checkout the repository
       with:
         ref: v${{ needs.release.outputs.current_version }}
@@ -200,7 +200,7 @@ jobs:
     - release
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2.4.0
+    - uses: actions/checkout@v3
       name: Checkout the repository
       with:
         lfs: true
