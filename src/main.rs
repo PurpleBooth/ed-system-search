@@ -29,7 +29,8 @@ mod filter;
 mod stub;
 use clap::Parser;
 
-fn main() -> Result<()> {
+#[tokio::main]
+async fn main() -> Result<()> {
     set_panic_hook();
     let args = Cli::parse();
     let compressed_file = File::open(&args.edsm_path).into_diagnostic()?;
@@ -39,7 +40,7 @@ fn main() -> Result<()> {
     let search_parameters = parameters_from_matches(&args, systems.as_slice()).into_diagnostic()?;
     let filtered_system = filter::filter(&search_parameters, systems.as_slice());
 
-    display_systems(filtered_system);
+    display_systems(filtered_system.await);
 
     Ok(())
 }

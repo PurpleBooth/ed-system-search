@@ -1,43 +1,51 @@
+use futures::{stream, StreamExt};
 use std::collections::HashSet;
+use std::future::ready;
 
 use crate::distance;
 use crate::domain::{Coords, System, SystemFilter};
 
-pub fn filter<'a, T: System<'a> + Clone>(
-    search_options: &'a [SystemFilter<'_>],
+pub async fn filter<'a, T: System<'a> + Clone + Send + Sync>(
+    search_options: &'a [SystemFilter<'a>],
     systems: &'a [T],
 ) -> Vec<T> {
-    let mut systems: Vec<_> = systems
-        .iter()
+    let mut systems: Vec<_> = stream::iter(systems.iter().cloned())
         .filter(|system| {
-            search_options.iter().all(|filter| match filter {
-                SystemFilter::MaximumDistanceFrom(reference, distance_from_reference_ls) => {
-                    has_location_within_max_distance_from_reference(
-                        *distance_from_reference_ls,
-                        reference,
-                        *system,
-                    )
-                }
-                SystemFilter::MinimumStationCount(types, docks) => {
-                    has_docks(*docks, types, *system)
-                }
-                SystemFilter::MaximumFactionCount(factions) => {
-                    has_max_number_of_factions(*factions, *system)
-                }
-                SystemFilter::MinimumPopulation(population) => {
-                    has_min_population(*population, *system)
-                }
-                SystemFilter::ExcludeSystems(systems) => !is_excluded_system(systems, *system),
-                SystemFilter::ExcludeSystemsWithPlayerFactions => !has_player_faction(*system),
-                SystemFilter::Allegiance(allegiance) => has_allegiance(allegiance, *system),
-                SystemFilter::Government(government) => has_government(government, *system),
-            })
+            ready(
+                search_options
+                    .iter()
+                    .all(|filter| suitable_system(system, filter)),
+            )
         })
-        .cloned()
-        .collect();
+        .collect()
+        .await;
 
     systems.sort_by(|a, b| a.name().cmp(b.name()));
     systems
+}
+
+fn suitable_system<'a, T: System<'a> + Clone + Send>(
+    system: &T,
+    filter: &SystemFilter<'_>,
+) -> bool {
+    match filter {
+        SystemFilter::MaximumDistanceFrom(reference, distance_from_reference_ls) => {
+            has_location_within_max_distance_from_reference(
+                *distance_from_reference_ls,
+                reference,
+                system,
+            )
+        }
+        SystemFilter::MinimumStationCount(types, docks) => has_docks(*docks, types, system),
+        SystemFilter::MaximumFactionCount(factions) => {
+            has_max_number_of_factions(*factions, system)
+        }
+        SystemFilter::MinimumPopulation(population) => has_min_population(*population, system),
+        SystemFilter::ExcludeSystems(systems) => !is_excluded_system(systems, system),
+        SystemFilter::ExcludeSystemsWithPlayerFactions => !has_player_faction(system),
+        SystemFilter::Allegiance(allegiance) => has_allegiance(allegiance, system),
+        SystemFilter::Government(government) => has_government(government, system),
+    }
 }
 
 fn is_excluded_system<'a, T: System<'a>>(excluded_systems: &HashSet<&str>, system: &T) -> bool {
@@ -215,14 +223,14 @@ mod tests {
         }
     }
 
-    #[test]
-    fn no_options_returns_everything() {
+    #[tokio::test]
+    async fn no_options_returns_everything() {
         let input = [make_system("Sanos"), make_system("Sol")];
-        assert_eq!(filter(&[], &input), input);
+        assert_eq!(filter(&[], &input).await, input);
     }
 
-    #[test]
-    fn systems_without_enough_large_docks_are_skipped() {
+    #[tokio::test]
+    async fn systems_without_enough_large_docks_are_skipped() {
         let sol = make_stub_system_with_docks(
             "Sol",
             &[
@@ -246,11 +254,11 @@ mod tests {
             ),
             sol.clone(),
         ];
-        assert_eq!(filter(&[min_large_docks(5)], &input,), &[sol]);
+        assert_eq!(filter(&[min_large_docks(5)], &input,).await, &[sol]);
     }
 
-    #[test]
-    fn systems_without_enough_starports_are_skipped() {
+    #[tokio::test]
+    async fn systems_without_enough_starports_are_skipped() {
         let sol = make_stub_system_with_docks(
             "Sol",
             &["Coriolis Starport", "Ocellus Starport", "Orbis Starport"],
@@ -262,21 +270,21 @@ mod tests {
             ),
             sol.clone(),
         ];
-        assert_eq!(filter(&[min_starports(3)], &input,), &[sol]);
+        assert_eq!(filter(&[min_starports(3)], &input,).await, &[sol]);
     }
 
-    #[test]
-    fn systems_without_enough_docks_are_skipped() {
+    #[tokio::test]
+    async fn systems_without_enough_docks_are_skipped() {
         let sol = make_stub_system_with_docks("Sol", &["Asteroid base", "Planetary Outpost"]);
         let input = [
             make_stub_system_with_docks("Sanos", &["Planetary Outpost"]),
             sol.clone(),
         ];
-        assert_eq!(filter(&[min_docks(2)], &input,), &[sol]);
+        assert_eq!(filter(&[min_docks(2)], &input,).await, &[sol]);
     }
 
-    #[test]
-    fn systems_too_far_from_sol_skipped() {
+    #[tokio::test]
+    async fn systems_too_far_from_sol_skipped() {
         let sol = make_system_at_coords(
             "Sol",
             domain::Coords {
@@ -297,25 +305,34 @@ mod tests {
             ),
             sol.clone(),
         ];
-        assert_eq!(filter(&[max_distance_from_sol(90.0)], &input), vec![sol]);
+        assert_eq!(
+            filter(&[max_distance_from_sol(90.0)], &input).await,
+            vec![sol]
+        );
     }
 
-    #[test]
-    fn permit_locked_systems_skipped() {
+    #[tokio::test]
+    async fn permit_locked_systems_skipped() {
         let sanos = make_system("Sanos");
         let input = [sanos.clone(), make_system("Sol")];
-        assert_eq!(filter(&[exclude_permit_locked()], &input), vec![sanos]);
+        assert_eq!(
+            filter(&[exclude_permit_locked()], &input).await,
+            vec![sanos]
+        );
     }
 
-    #[test]
-    fn rare_commodity_systems_skipped() {
+    #[tokio::test]
+    async fn rare_commodity_systems_skipped() {
         let sanos = make_system("Sanos");
         let input = [sanos.clone(), make_system("Alpha Centauri")];
-        assert_eq!(filter(&[exclude_rare_commodity()], &input), vec![sanos]);
+        assert_eq!(
+            filter(&[exclude_rare_commodity()], &input).await,
+            vec![sanos]
+        );
     }
 
-    #[test]
-    fn systems_too_far_from_reference_skipped() {
+    #[tokio::test]
+    async fn systems_too_far_from_reference_skipped() {
         let sol = make_system_at_coords(
             "Sol",
             domain::Coords {
@@ -346,55 +363,62 @@ mod tests {
                     90.0,
                 )],
                 &input,
-            ),
+            )
+            .await,
             vec![sol]
         );
     }
 
-    #[test]
-    fn systems_with_too_low_population_are_ignored() {
+    #[tokio::test]
+    async fn systems_with_too_low_population_are_ignored() {
         let sol = make_system_with_population("Sol", 10000_u128);
         let input = [make_system_with_population("Sanos", 9999_u128), sol.clone()];
-        assert_eq!(filter(&[min_population(10000_u128)], &input), vec![sol]);
+        assert_eq!(
+            filter(&[min_population(10000_u128)], &input).await,
+            vec![sol]
+        );
     }
 
-    #[test]
-    fn systems_with_too_many_factions_are_ignored_ignored() {
+    #[tokio::test]
+    async fn systems_with_too_many_factions_are_ignored_ignored() {
         let sol = make_system_with_factions("Sol", &[false, false, false]);
         let input = [
             make_system_with_factions("Sanos", &[false, false, false, false]),
             sol.clone(),
         ];
-        assert_eq!(filter(&[max_number_of_factions(3)], &input), vec![sol]);
+        assert_eq!(
+            filter(&[max_number_of_factions(3)], &input).await,
+            vec![sol]
+        );
     }
 
-    #[test]
-    fn systems_with_player_factions_are_ignored_ignored() {
+    #[tokio::test]
+    async fn systems_with_player_factions_are_ignored_ignored() {
         let sol = make_system_with_factions("Sol", &[false, false]);
         let input = [
             make_system_with_factions("Sanos", &[false, true]),
             sol.clone(),
         ];
-        assert_eq!(filter(&[exclude_player_faction()], &input), vec![sol]);
+        assert_eq!(filter(&[exclude_player_faction()], &input).await, vec![sol]);
     }
 
-    #[test]
-    fn systems_allegiance() {
+    #[tokio::test]
+    async fn systems_allegiance() {
         let sol = make_system_with_allegiance("Sol", "Alliance");
         let input = [
             make_system_with_allegiance("Sanos", "Federation"),
             sol.clone(),
         ];
-        assert_eq!(filter(&[allegiance("Alliance")], &input), vec![sol]);
+        assert_eq!(filter(&[allegiance("Alliance")], &input).await, vec![sol]);
     }
 
-    #[test]
-    fn systems_government() {
+    #[tokio::test]
+    async fn systems_government() {
         let sol = make_system_with_government("Sol", "Democracy");
         let input = [
             make_system_with_government("Sanos", "Corporate"),
             sol.clone(),
         ];
-        assert_eq!(filter(&[government("Democracy")], &input), vec![sol]);
+        assert_eq!(filter(&[government("Democracy")], &input).await, vec![sol]);
     }
 }
