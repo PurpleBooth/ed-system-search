@@ -65,12 +65,14 @@ Sol
 
 if it's not a number it'll fail
 
-``` shell,script(name="min-docks-large-err",expected_exit_code=1)
+``` shell,script(name="min-docks-large-err",expected_exit_code=2)
 ed-system-search --min-docks-large banana "$EDSM_GZ_PATH"
 ```
 
 ``` text,verify(script_name="min-docks-large-err",stream=stderr)
-Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
+error: Invalid value "banana" for '--min-docks-large <COUNT>': invalid digit found in string
+
+For more information try --help
 ```
 
 ## Minimum number of starports
@@ -88,12 +90,14 @@ Sol
 
 if it's not a number it'll fail
 
-``` shell,script(name="min-starports-err",expected_exit_code=1)
+``` shell,script(name="min-starports-err",expected_exit_code=2)
 ed-system-search --min-starports banana "$EDSM_GZ_PATH"
 ```
 
 ``` text,verify(script_name="min-starports-err",stream=stderr)
-Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
+error: Invalid value "banana" for '--min-starports <COUNT>': invalid digit found in string
+
+For more information try --help
 ```
 
 ## Minimum number of docks
@@ -110,12 +114,14 @@ Sol
 
 if it's not a number it'll fail
 
-``` shell,script(name="min-docks-err",expected_exit_code=1)
+``` shell,script(name="min-docks-err",expected_exit_code=2)
 ed-system-search --min-docks banana "$EDSM_GZ_PATH"
 ```
 
 ``` text,verify(script_name="min-docks-err",stream=stderr)
-Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
+error: Invalid value "banana" for '--min-docks <COUNT>': invalid digit found in string
+
+For more information try --help
 ```
 
 ## Minimum population
@@ -134,12 +140,14 @@ Lave
 
 if it's not a number it'll fail
 
-``` shell,script(name="min-population-err",expected_exit_code=1)
+``` shell,script(name="min-population-err",expected_exit_code=2)
 ed-system-search --min-population banana "$EDSM_GZ_PATH"
 ```
 
 ``` text,verify(script_name="min-population-err",stream=stderr)
-Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
+error: Invalid value "banana" for '--min-population <COUNT>': invalid digit found in string
+
+For more information try --help
 ```
 
 ## Allegiance
@@ -235,12 +243,14 @@ Trifid Sector GW-W d1-220
 
 if it's not a number it'll fail
 
-``` shell,script(name="max-number-of-factions-err",expected_exit_code=1)
+``` shell,script(name="max-number-of-factions-err",expected_exit_code=2)
 ed-system-search --max-number-of-factions banana "$EDSM_GZ_PATH"
 ```
 
 ``` text,verify(script_name="max-number-of-factions-err",stream=stderr)
-Error: Cli(InvalidCount(ParseIntError { kind: InvalidDigit }))
+error: Invalid value "banana" for '--max-number-of-factions <COUNT>': invalid digit found in string
+
+For more information try --help
 ```
 
 ## Max distance from sol system
@@ -265,12 +275,14 @@ Wolf 359
 
 if it's not a number it'll fail
 
-``` shell,script(name="max-distance-from-sol-err",expected_exit_code=1)
+``` shell,script(name="max-distance-from-sol-err",expected_exit_code=2)
 ed-system-search --max-distance-from-sol banana "$EDSM_GZ_PATH"
 ```
 
 ``` text,verify(script_name="max-distance-from-sol-err",stream=stderr)
-Error: Cli(InvalidFloat(ParseFloatError { kind: Invalid }))
+error: Invalid value "banana" for '--max-distance-from-sol <LIGHT_SECONDS>': invalid float literal
+
+For more information try --help
 ```
 
 ## Max distance from reference system
@@ -295,20 +307,24 @@ Wolf 359
 
 if it's not a number it'll fail
 
-``` shell,script(name="max-distance-from-reference-err",expected_exit_code=1)
+``` shell,script(name="max-distance-from-reference-err",expected_exit_code=2)
 ed-system-search --reference=Sol --max-distance-from-reference banana "$EDSM_GZ_PATH"
 ```
 
 ``` text,verify(script_name="max-distance-from-reference-err",stream=stderr)
-Error: Cli(InvalidFloat(ParseFloatError { kind: Invalid }))
+error: Invalid value "banana" for '--max-distance-from-reference <LIGHT_SECONDS>': invalid float literal
+
+For more information try --help
 ```
 
 If the reference isn't found it'll fail
 
 ``` shell,script(name="missing-reference-err",expected_exit_code=1)
-ed-system-search --reference=Missing --max-distance-from-reference 10 "$EDSM_GZ_PATH"
+NO_COLOR=1 ed-system-search --reference=Missing --max-distance-from-reference 10 "$EDSM_GZ_PATH"
 ```
 
 ``` text,verify(script_name="missing-reference-err",stream=stderr)
-Error: Cli(SystemNotFound("Missing"))
+Error: 
+  × system not found: Missing
+
 ```

@@ -14,11 +14,12 @@
 use std::fs::File;
 use std::io;
 
-use flate2::read::GzDecoder;
-use thiserror::Error as ThisError;
-
 use crate::cli::parameters_from_matches;
+use crate::cli::Cli;
 use crate::domain::System;
+use flate2::read::GzDecoder;
+use miette::{set_panic_hook, IntoDiagnostic, Result};
+use thiserror::Error as ThisError;
 
 mod cli;
 mod distance;
@@ -26,16 +27,16 @@ mod domain;
 mod edsm;
 mod filter;
 mod stub;
+use clap::Parser;
 
-fn main() -> Result<(), Error> {
-    miette::set_panic_hook();
-    let matches = cli::cli().get_matches();
-    let path = matches.value_of("edsm-path").unwrap();
-    let compressed_file = File::open(path)?;
+fn main() -> Result<()> {
+    set_panic_hook();
+    let args = Cli::parse();
+    let compressed_file = File::open(&args.edsm_path).into_diagnostic()?;
     let file = GzDecoder::new(compressed_file);
-    let systems = edsm::parse(file)?;
+    let systems = edsm::parse(file).into_diagnostic()?;
 
-    let search_parameters = parameters_from_matches(&matches, systems.as_slice())?;
+    let search_parameters = parameters_from_matches(&args, systems.as_slice()).into_diagnostic()?;
     let filtered_system = filter::filter(&search_parameters, systems.as_slice());
 
     display_systems(filtered_system);

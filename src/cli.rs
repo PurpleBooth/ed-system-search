@@ -1,7 +1,7 @@
 use std::num::{ParseFloatError, ParseIntError};
-use std::str::FromStr;
+use std::path::PathBuf;
 
-use clap::{crate_authors, crate_version, Arg, ArgMatches, Command};
+use clap::Parser;
 use thiserror::Error as ThisError;
 
 use crate::domain;
@@ -11,153 +11,64 @@ use crate::domain::{
     min_large_docks, min_population, min_starports, System,
 };
 
-#[allow(clippy::too_many_lines)]
-pub fn cli() -> Command<'static> {
-    Command::new(String::from(env!("CARGO_PKG_NAME")))
-        .bin_name(String::from(env!("CARGO_PKG_NAME")))
-        .version(crate_version!())
-        .author(crate_authors!())
-        .about(env!("CARGO_PKG_DESCRIPTION"))
-        .arg(
-            Arg::new("edsm-path")
-                .help("This is the path to th EDSM dump in .json.gz format")
-                .required(true),
-        )
-        .arg(
-            Arg::new("min-docks-large")
-                .help(
-                    "Filter the systems that are have less than the given number of docks with room for large ships",
-                )
-                .long("min-docks-large")
-                .takes_value(true)
-                .value_name("COUNT")
-                .required(false),
-        )
-        .arg(
-            Arg::new("allegiance")
-                .help(
-                    "Filter by allegiance",
-                )
-                .long("allegiance")
-                .takes_value(true)
-                .value_name("MAJOR_FACTION")
-                .required(false),
-        )
-        .arg(
-            Arg::new("government")
-                .help(
-                    "Filter by government",
-                )
-                .long("government")
-                .takes_value(true)
-                .value_name("GOVERNMENT_TYPE")
-                .required(false),
-        )
-        .arg(
-            Arg::new("min-starports")
-                .help(
-                    "Filter the systems that are have less than the given number of starports"
-                )
-                .long("min-starports")
-                .takes_value(true)
-                .value_name("COUNT")
-                .required(false),
-        )
-        .arg(
-            Arg::new("min-docks")
-                .help(
-                    "Filter the systems that are have less than the given number of docks"
-                )
-                .long("min-docks")
-                .takes_value(true)
-                .value_name("COUNT")
-                .required(false),
-        )
-        .arg(
-            Arg::new("min-population")
-                .help(
-                    "Filter the systems that are have less than the given population"
-                )
-                .long("min-population")
-                .takes_value(true)
-                .value_name("COUNT")
-                .required(false),
-        )
-        .arg(
-            Arg::new("max-distance-from-sol")
-                .help(
-                    "Filter the systems that are further than this distance from sol"
-                )
-                .long("max-distance-from-sol")
-                .takes_value(true)
-                .value_name("LIGHT_SECONDS")
-                .required(false),
-        )
-        .arg(
-            Arg::new("max-distance-from-reference")
-                .help(
-                    "Filter the systems that are further than this distance from the reference"
-                )
-                .long("max-distance-from-reference")
-                .takes_value(true)
-                .value_name("LIGHT_SECONDS")
-                .required(false),
-        )
-        .arg(
-            Arg::new("max-number-of-factions")
-                .help(
-                    "Filter the systems that have more factions than the number given"
-                )
-                .long("max-number-of-factions")
-                .takes_value(true)
-                .value_name("COUNT")
-                .required(false),
-        )
-        .arg(
-            Arg::new("reference")
-                .help(
-                    "A reference system used by other filters"
-                )
-                .long("reference")
-                .takes_value(true)
-                .value_name("SYSTEM_NAME")
-                .required(false),
-        )
-        .arg(
-            Arg::new("exclude-permit-locked")
-                .help(
-                    "Exclude permit locked systems"
-                )
-                .long("exclude-permit-locked")
-                .takes_value(false)
-                .required(false),
-        )
-        .arg(
-            Arg::new("exclude-player-faction")
-                .help(
-                    "Exclude systems that contain a player faction"
-                )
-                .long("exclude-player-faction")
-                .takes_value(false)
-                .required(false),
-        )
-        .arg(
-            Arg::new("exclude-rare-commodity")
-                .help(
-                    "Exclude systems that sell rare commodities"
-                )
-                .long("exclude-rare-commodity")
-                .takes_value(false)
-                .required(false),
-        )
+#[derive(Parser, Debug, Default, PartialEq)]
+#[clap(author, version, about)]
+pub struct Cli {
+    /// This is the path to th EDSM dump in .json.gz format
+    #[clap(value_name = "edsm-path")]
+    pub edsm_path: PathBuf,
+    /// Filter the systems that are have less than the given number of docks with room for large ships
+    #[clap(long, value_name = "COUNT")]
+    min_docks_large: Option<usize>,
+    /// Filter by allegiance
+    #[clap(long, value_name = "MAJOR_FACTION")]
+    allegiance: Option<String>,
+    /// Filter by government
+    #[clap(long, value_name = "GOVERNMENT_TYPE")]
+    government: Option<String>,
+    /// Filter the systems that are have less than the given number of starports
+    #[clap(long, value_name = "COUNT")]
+    min_starports: Option<usize>,
+    /// Filter the systems that are have less than the given number of docks
+    #[clap(long, value_name = "COUNT")]
+    min_docks: Option<usize>,
+    /// Filter the systems that are have less than the given population
+    #[clap(long, value_name = "COUNT")]
+    min_population: Option<u128>,
+    /// Filter the systems that are further than this distance from sol
+    #[clap(long, value_name = "LIGHT_SECONDS")]
+    max_distance_from_sol: Option<f64>,
+    /// Filter the systems that are further than this distance from the reference
+    #[clap(long, value_name = "LIGHT_SECONDS", requires = "reference")]
+    max_distance_from_reference: Option<f64>,
+    /// Filter the systems that have more factions than the number given
+    #[clap(long, value_name = "COUNT")]
+    max_number_of_factions: Option<usize>,
+    /// A reference system used by other filters
+    #[clap(
+        long,
+        value_name = "SYSTEM_NAME",
+        requires = "max_distance_from_reference"
+    )]
+    reference: Option<String>,
+    /// Exclude permit locked systems
+    #[clap(long, takes_value = false)]
+    exclude_permit_locked: bool,
+    /// Exclude systems that contain a player faction
+    #[clap(long, takes_value = false)]
+    exclude_player_faction: bool,
+    /// Exclude systems that sell rare commodities
+    #[clap(long, takes_value = false)]
+    exclude_rare_commodity: bool,
 }
 
 pub fn parameters_from_matches<'a, T: System<'a>>(
-    matches: &'a ArgMatches,
+    matches: &'a Cli,
     systems: &'a [T],
 ) -> Result<Vec<domain::SystemFilter<'a>>, Error> {
     let reference = matches
-        .value_of("reference")
+        .reference
+        .as_ref()
         .map(|reference_name| {
             systems
                 .iter()
@@ -168,50 +79,29 @@ pub fn parameters_from_matches<'a, T: System<'a>>(
         .map_or(Ok(None), |v| v.map(Some))?;
 
     return Ok(vec![
-        matches.value_of("allegiance").map(allegiance),
-        matches.value_of("government").map(government),
+        matches.allegiance.as_ref().map(|x| allegiance(x)),
+        matches.government.as_ref().map(|x| government(x)),
+        matches.min_docks_large.map(min_large_docks),
+        matches.min_docks.map(min_docks),
+        matches.min_starports.map(min_starports),
+        matches.max_distance_from_sol.map(max_distance_from_sol),
+        matches.min_population.map(min_population),
         matches
-            .value_of("min-docks-large")
-            .map(|value| usize::from_str(value).map_err(Error::from))
-            .map_or(Ok(None), |v| v.map(|x| Some(min_large_docks(x))))?,
-        matches
-            .value_of("min-docks")
-            .map(|value| usize::from_str(value).map_err(Error::from))
-            .map_or(Ok(None), |v| v.map(|x| Some(min_docks(x))))?,
-        matches
-            .value_of("min-starports")
-            .map(|value| usize::from_str(value).map_err(Error::from))
-            .map_or(Ok(None), |v| v.map(|x| Some(min_starports(x))))?,
-        matches
-            .value_of("max-distance-from-sol")
-            .map(|value| f64::from_str(value).map_err(Error::from))
-            .map_or(Ok(None), |v| v.map(|x| Some(max_distance_from_sol(x))))?,
-        matches
-            .value_of("min-population")
-            .map(|value| u128::from_str(value).map_err(Error::from))
-            .map_or(Ok(None), |v| v.map(|x| Some(min_population(x))))?,
-        matches
-            .value_of("max-distance-from-reference")
-            .map(|value| f64::from_str(value).map_err(Error::from))
-            .and_then(|value| reference.map(|reference| value.map(|x| (reference, x))))
-            .map_or(Ok(None), |v| {
-                v.map(|(reference, value)| Some(max_distance_from_reference(reference, value)))
-            })?,
-        matches
-            .value_of("max-number-of-factions")
-            .map(|value| usize::from_str(value).map_err(Error::from))
-            .map_or(Ok(None), |v| v.map(|x| Some(max_number_of_factions(x))))?,
-        if matches.is_present("exclude-permit-locked") {
+            .max_distance_from_reference
+            .zip(reference)
+            .map(|(distance, reference)| max_distance_from_reference(reference, distance)),
+        matches.max_number_of_factions.map(max_number_of_factions),
+        if matches.exclude_permit_locked {
             Some(exclude_permit_locked())
         } else {
             None
         },
-        if matches.is_present("exclude-rare-commodity") {
+        if matches.exclude_rare_commodity {
             Some(exclude_rare_commodity())
         } else {
             None
         },
-        if matches.is_present("exclude-player-faction") {
+        if matches.exclude_player_faction {
             Some(exclude_player_faction())
         } else {
             None
@@ -234,7 +124,7 @@ pub enum Error {
 
 #[cfg(test)]
 mod tests {
-    use crate::cli::{cli, parameters_from_matches};
+    use crate::cli::{parameters_from_matches, Cli};
     use crate::domain::{
         allegiance, government, max_distance_from_reference, max_distance_from_sol, min_docks,
         min_large_docks, min_population, min_starports, Coords,
@@ -243,7 +133,7 @@ mod tests {
 
     #[test]
     fn no_switches() {
-        let args = cli().get_matches_from(vec!["ed-system-search", "some-edsm-dump.json.gz"]);
+        let args = Cli::default();
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![]
@@ -251,22 +141,12 @@ mod tests {
     }
 
     #[test]
-    fn large_docks_invalid() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--min-docks-large=banana",
-            "some-edsm-dump.json.gz",
-        ]);
-        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err());
-    }
-
-    #[test]
     fn large_docks_present() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--min-docks-large=10",
-            "some-edsm-dump.json.gz",
-        ]);
+        let args = Cli {
+            min_docks_large: Some(10),
+            ..Cli::default()
+        };
+
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![min_large_docks(10)]
@@ -274,22 +154,12 @@ mod tests {
     }
 
     #[test]
-    fn min_population_invalid() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--min-population=banana",
-            "some-edsm-dump.json.gz",
-        ]);
-        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),);
-    }
-
-    #[test]
     fn min_population_present() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--min-population=10",
-            "some-edsm-dump.json.gz",
-        ]);
+        let args = Cli {
+            min_population: Some(10),
+            ..Cli::default()
+        };
+
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![min_population(10)]
@@ -297,22 +167,12 @@ mod tests {
     }
 
     #[test]
-    fn docks_invalid() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--min-docks=banana",
-            "some-edsm-dump.json.gz",
-        ]);
-        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),);
-    }
-
-    #[test]
     fn docks_present() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--min-docks=10",
-            "some-edsm-dump.json.gz",
-        ]);
+        let args = Cli {
+            min_docks: Some(10),
+            ..Cli::default()
+        };
+
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![min_docks(10)]
@@ -320,22 +180,12 @@ mod tests {
     }
 
     #[test]
-    fn starports_invalid() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--min-starports=banana",
-            "some-edsm-dump.json.gz",
-        ]);
-        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),);
-    }
-
-    #[test]
     fn starports_present() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--min-starports=10",
-            "some-edsm-dump.json.gz",
-        ]);
+        let args = Cli {
+            min_starports: Some(10),
+            ..Cli::default()
+        };
+
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![min_starports(10)]
@@ -343,22 +193,12 @@ mod tests {
     }
 
     #[test]
-    fn population_invalid() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--min-population=banana",
-            "some-edsm-dump.json.gz",
-        ]);
-        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),);
-    }
-
-    #[test]
     fn population_present() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--min-population=25000000000",
-            "some-edsm-dump.json.gz",
-        ]);
+        let args = Cli {
+            min_population: Some(25_000_000_000),
+            ..Cli::default()
+        };
+
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![min_population(25_000_000_000)]
@@ -367,11 +207,11 @@ mod tests {
 
     #[test]
     fn allegiance_matches() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--allegiance=Alliance",
-            "some-edsm-dump.json.gz",
-        ]);
+        let args = Cli {
+            allegiance: Some("Alliance".to_string()),
+            ..Cli::default()
+        };
+
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![allegiance("Alliance")]
@@ -380,11 +220,11 @@ mod tests {
 
     #[test]
     fn government_matches() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--government=Democracy",
-            "some-edsm-dump.json.gz",
-        ]);
+        let args = Cli {
+            government: Some("Democracy".to_string()),
+            ..Cli::default()
+        };
+
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![government("Democracy")]
@@ -393,11 +233,11 @@ mod tests {
 
     #[test]
     fn exclude_permit_locked() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--exclude-permit-locked",
-            "some-edsm-dump.json.gz",
-        ]);
+        let args = Cli {
+            exclude_permit_locked: true,
+            ..Cli::default()
+        };
+
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![domain::exclude_permit_locked()]
@@ -406,11 +246,11 @@ mod tests {
 
     #[test]
     fn exclude_rare_commodity() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--exclude-rare-commodity",
-            "some-edsm-dump.json.gz",
-        ]);
+        let args = Cli {
+            exclude_rare_commodity: true,
+            ..Cli::default()
+        };
+
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![domain::exclude_rare_commodity()]
@@ -419,11 +259,11 @@ mod tests {
 
     #[test]
     fn exclude_player_faction() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--exclude-player-faction",
-            "some-edsm-dump.json.gz",
-        ]);
+        let args = Cli {
+            exclude_player_faction: true,
+            ..Cli::default()
+        };
+
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![domain::exclude_player_faction()]
@@ -431,22 +271,12 @@ mod tests {
     }
 
     #[test]
-    fn max_factions_invalid() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--max-number-of-factions=banana",
-            "some-edsm-dump.json.gz",
-        ]);
-        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),);
-    }
-
-    #[test]
     fn max_factions_present() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--max-number-of-factions=10",
-            "some-edsm-dump.json.gz",
-        ]);
+        let args = Cli {
+            max_number_of_factions: Some(10),
+            ..Cli::default()
+        };
+
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![domain::max_number_of_factions(10)]
@@ -454,22 +284,12 @@ mod tests {
     }
 
     #[test]
-    fn distance_from_sol_invalid() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--max-distance-from-sol=banana",
-            "some-edsm-dump.json.gz",
-        ]);
-        assert!(parameters_from_matches(&args, &[] as &[stub::System]).is_err(),);
-    }
-
-    #[test]
     fn distance_from_sol_present() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--max-distance-from-sol=10",
-            "some-edsm-dump.json.gz",
-        ]);
+        let args = Cli {
+            max_distance_from_sol: Some(10.),
+            ..Cli::default()
+        };
+
         assert_eq!(
             parameters_from_matches(&args, &[] as &[stub::System]).unwrap(),
             vec![max_distance_from_sol(10.0)]
@@ -477,40 +297,13 @@ mod tests {
     }
 
     #[test]
-    fn distance_from_reference_invalid() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--max-distance-from-reference=banana",
-            "--reference=Sol",
-            "some-edsm-dump.json.gz",
-        ]);
-        assert!(parameters_from_matches(
-            &args,
-            &[stub::System {
-                name: "Sol".into(),
-                coords: Coords {
-                    x: f64::from(0),
-                    y: f64::from(0),
-                    z: f64::from(0),
-                },
-                stations: vec![],
-                population: 0,
-                factions: vec![],
-                allegiance: "".to_string(),
-                government: "".to_string()
-            }],
-        )
-        .is_err(),);
-    }
-
-    #[test]
     fn reference_system_not_found() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--max-distance-from-reference=10",
-            "--reference=Missing",
-            "some-edsm-dump.json.gz",
-        ]);
+        let args = Cli {
+            max_distance_from_reference: Some(10.),
+            reference: Some("Missing".to_string()),
+            ..Cli::default()
+        };
+
         assert!(parameters_from_matches(
             &args,
             &[stub::System {
@@ -532,12 +325,12 @@ mod tests {
 
     #[test]
     fn both_reference_and_distance_present() {
-        let args = cli().get_matches_from(vec![
-            "ed-system-search",
-            "--max-distance-from-reference=10",
-            "--reference=Sol",
-            "some-edsm-dump.json.gz",
-        ]);
+        let args = Cli {
+            max_distance_from_reference: Some(10.),
+            reference: Some("Sol".to_string()),
+            ..Cli::default()
+        };
+
         assert_eq!(
             parameters_from_matches(
                 &args,
@@ -552,7 +345,7 @@ mod tests {
                     population: 0,
                     factions: vec![],
                     allegiance: "".to_string(),
-                    government: "".to_string()
+                    government: "".to_string(),
                 }],
             )
             .unwrap(),
@@ -562,7 +355,7 @@ mod tests {
                     y: f64::from(0),
                     z: f64::from(0),
                 },
-                10.0
+                10.0,
             )]
         );
     }
