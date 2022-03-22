@@ -96,7 +96,7 @@ jobs:
       name: Checkout the repository
       with:
         ref: v${{ needs.release.outputs.current_version }}
-    - uses: actions/cache@v2.1.7
+    - uses: actions/cache@v3
       name: Cache cargo dependencies
       with:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
@@ -139,7 +139,7 @@ jobs:
       name: Checkout the repository
       with:
         ref: v${{ needs.release.outputs.current_version }}
-    - uses: actions/cache@v2.1.7
+    - uses: actions/cache@v3
       name: Cache cargo dependencies
       with:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
@@ -208,7 +208,7 @@ jobs:
         lfs: true
         fetch-depth: 0
         ref: v${{ needs.release.outputs.current_version }}
-    - uses: actions/cache@v2.1.7
+    - uses: actions/cache@v3
       name: Cache cargo dependencies
       with:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
