@@ -220,7 +220,7 @@ jobs:
           target
     - uses: actions/download-artifact@v3
       name: Retrieve assets
-    - uses: PurpleBooth/changelog-action@v0.3.2
+    - uses: PurpleBooth/changelog-action@v0.3.3
       name: Generate changelog
       with:
         args: -v v${{ needs.release.outputs.previous_version }}..v${{ needs.release.outputs.current_version
