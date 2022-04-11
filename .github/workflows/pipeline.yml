@@ -119,7 +119,7 @@ jobs:
         command: build
     - run: wget -O systemsPopulated.json.gz  https://www.edsm.net/dump/systemsPopulated.json.gz
     - run: ./runners/generate-all-combinations
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       name: Store built version
       with:
         name: potential-faction-systems
@@ -172,7 +172,7 @@ jobs:
         REPOSITORY_NAME: ${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}
       run: mv ./target/release/$REPOSITORY_NAME$EXTENSION ./$REPOSITORY_NAME-$TARGET$EXTENSION
       shell: bash
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       name: Store built binary version
       with:
         name: bins
