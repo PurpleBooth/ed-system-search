@@ -103,10 +103,7 @@ impl<'system> domain::System<'system> for System {
 
 impl domain::Station for Station {
     fn station_type(&self) -> Option<&str> {
-        match &self.station_type {
-            None => None,
-            Some(value) => Some(value),
-        }
+        self.station_type.as_deref()
     }
 }
 
