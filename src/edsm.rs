@@ -51,17 +51,11 @@ impl<'system> domain::System<'system> for System {
     }
 
     fn allegiance(&self) -> &str {
-        match &self.allegiance {
-            None => "",
-            Some(value) => value,
-        }
+        self.allegiance.as_ref().map_or("", |value| value)
     }
 
     fn government(&self) -> &str {
-        match &self.government {
-            None => "",
-            Some(value) => value,
-        }
+        self.government.as_ref().map_or("", |value| value)
     }
 
     fn stations(&self) -> Vec<Box<dyn domain::Station>> {

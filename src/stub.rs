@@ -49,7 +49,7 @@ impl<'system> domain::System<'system> for System {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Station {
     pub(crate) station_type: Option<String>,
 }
@@ -60,7 +60,7 @@ impl domain::Station for Station {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Faction {
     pub(crate) is_player: bool,
 }

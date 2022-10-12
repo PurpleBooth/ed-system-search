@@ -91,7 +91,7 @@ fn has_location_within_max_distance_from_reference<'a, T: System<'a>>(
     reference: &Coords,
     system: &T,
 ) -> bool {
-    distance::distance(reference, &system.coordinates()) <= distance_from_reference_ls as f64
+    distance::distance(reference, &system.coordinates()) <= distance_from_reference_ls
 }
 
 #[cfg(test)]
@@ -118,8 +118,8 @@ mod tests {
             population: 0,
             factions: vec![],
             stations: vec![],
-            allegiance: "".to_string(),
-            government: "".to_string(),
+            allegiance: String::new(),
+            government: String::new(),
         }
     }
 
@@ -135,7 +135,7 @@ mod tests {
             population: 0,
             factions: vec![],
             stations: vec![],
-            government: "".to_string(),
+            government: String::new(),
         }
     }
 
@@ -148,7 +148,7 @@ mod tests {
                 z: -52.625_f64,
             },
             government: String::from(government),
-            allegiance: "".into(),
+            allegiance: String::new(),
             population: 0,
             factions: vec![],
             stations: vec![],
@@ -166,8 +166,8 @@ mod tests {
             population,
             factions: vec![],
             stations: vec![],
-            allegiance: "".to_string(),
-            government: "".to_string(),
+            allegiance: String::new(),
+            government: String::new(),
         }
     }
 
@@ -187,8 +187,8 @@ mod tests {
                     station_type: Some(String::from(*x)),
                 })
                 .collect(),
-            allegiance: "".to_string(),
-            government: "".to_string(),
+            allegiance: String::new(),
+            government: String::new(),
         }
     }
 
@@ -206,8 +206,8 @@ mod tests {
                 .map(|player| Faction { is_player: *player })
                 .collect(),
             stations: vec![],
-            allegiance: "".to_string(),
-            government: "".to_string(),
+            allegiance: String::new(),
+            government: String::new(),
         }
     }
 
@@ -218,8 +218,8 @@ mod tests {
             population: 1,
             factions: vec![],
             stations: vec![],
-            allegiance: "".to_string(),
-            government: "".to_string(),
+            allegiance: String::new(),
+            government: String::new(),
         }
     }
 

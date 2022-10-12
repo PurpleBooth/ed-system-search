@@ -316,8 +316,8 @@ mod tests {
                 stations: vec![],
                 population: 0,
                 factions: vec![],
-                allegiance: "".to_string(),
-                government: "".to_string()
+                allegiance: String::new(),
+                government: String::new()
             }],
         )
         .is_err(),);
@@ -344,8 +344,8 @@ mod tests {
                     stations: vec![],
                     population: 0,
                     factions: vec![],
-                    allegiance: "".to_string(),
-                    government: "".to_string(),
+                    allegiance: String::new(),
+                    government: String::new(),
                 }],
             )
             .unwrap(),
