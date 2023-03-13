@@ -20,4 +20,4 @@ thiserror = "1.0.31"
 flate2 = "1.0.23"
 miette = { version = "4.7.1", features = ["fancy"] }
 tokio = { version = "1.18.2", features = ["full"] }
-futures = "0.3.21"
+futures = "0.3.27"
